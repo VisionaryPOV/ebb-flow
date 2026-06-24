@@ -68,6 +68,9 @@ targets:
     sources:
       - path: EbbFlowWatch
       - path: Shared
+    dependencies:
+      - target: EbbFlowWatchWidgets
+        embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.watch

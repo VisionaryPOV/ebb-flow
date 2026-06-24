@@ -33,7 +33,7 @@ struct Phase3Phase4Tests {
             nextExtremeHeight: nil,
             fetchedAt: Date()
         )
-        let entry = TideLiveActivityManager.timelineEntry(from: payload)
+        let entry = TideLiveActivityBuilder.timelineEntry(from: payload)
         #expect(entry.stationName == "Marina del Rey")
         #expect(entry.isRising)
     }
