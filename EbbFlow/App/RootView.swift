@@ -5,6 +5,7 @@ extension Notification.Name {
     static let ebbFlowRefreshTides = Notification.Name("ebbFlowRefreshTides")
     static let ebbFlowSetChartScale = Notification.Name("ebbFlowSetChartScale")
     static let ebbFlowExportCSV = Notification.Name("ebbFlowExportCSV")
+    static let ebbFlowExportPDF = Notification.Name("ebbFlowExportPDF")
 }
 
 struct RootView: View {
@@ -39,7 +40,10 @@ private struct AppRootContent: View {
                 Task { await appModel.setChartScale(scale) }
             }
             .onReceive(NotificationCenter.default.publisher(for: .ebbFlowExportCSV)) { _ in
-                presentCSVExport()
+                presentExport(.csv)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .ebbFlowExportPDF)) { _ in
+                presentExport(.pdf)
             }
             .sheet(item: $exportItem) { item in
                 TideExportShareSheet(url: item.url)
@@ -47,15 +51,13 @@ private struct AppRootContent: View {
             .background(keyboardShortcutButtons)
     }
 
-    private func presentCSVExport() {
+    private func presentExport(_ kind: TideExportKind) {
         do {
-            let url = try TideExporter.writeCSVFile(
-                csv: appModel.exportCSV,
-                stationID: appModel.selectedStation.id
-            )
-            exportItem = TideExportItem(url: url)
+            exportItem = TideExportItem(url: try appModel.exportFileURL(kind: kind))
         } catch {
-            appModel.errorMessage = error.localizedDescription
+            appModel.errorMessage = kind == .csv
+                ? "CSV export requires Ebb & Flow Pro."
+                : "PDF export requires Ebb & Flow Pro."
         }
     }
 
@@ -70,8 +72,10 @@ private struct AppRootContent: View {
                 .keyboardShortcut("3", modifiers: .command)
             Button("") { Task { await appModel.loadDefaultStation() } }
                 .keyboardShortcut("r", modifiers: .command)
-            Button("") { presentCSVExport() }
+            Button("") { presentExport(.csv) }
                 .keyboardShortcut("e", modifiers: [.command, .shift])
+            Button("") { presentExport(.pdf) }
+                .keyboardShortcut("p", modifiers: [.command, .shift])
         }
         .hidden()
     }

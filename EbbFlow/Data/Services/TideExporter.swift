@@ -1,18 +1,13 @@
 import Foundation
 
 enum TideExporter {
-    private static let csvDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-        return formatter
-    }()
-
     static func csv(
         rows: [TideTableRow],
         stationName: String,
-        columns: Set<TideTableColumn> = Set(TideTableColumn.allCases)
+        columns: Set<TideTableColumn> = Set(TideTableColumn.allCases),
+        timeZone: TimeZone = TideDataTransformer.noaaLocalTimeZone
     ) -> String {
+        let formatter = TideDataTransformer.makePredictionDateFormatter(timeZone: timeZone)
         let visible = TideTableBuilder.visibleColumns(columns)
         var lines: [String] = []
         lines.append("# Station: \(stationName)")
@@ -23,7 +18,7 @@ enum TideExporter {
             for column in visible {
                 switch column {
                 case .time:
-                    fields.append(csvDateFormatter.string(from: row.time))
+                    fields.append(formatter.string(from: row.time))
                 case .height:
                     fields.append(String(format: "%.2f", row.height))
                 case .kind:
@@ -38,8 +33,10 @@ enum TideExporter {
     static func pdfTextLines(
         rows: [TideTableRow],
         stationName: String,
-        columns: Set<TideTableColumn> = Set(TideTableColumn.allCases)
+        columns: Set<TideTableColumn> = Set(TideTableColumn.allCases),
+        timeZone: TimeZone = TideDataTransformer.noaaLocalTimeZone
     ) -> [String] {
+        let formatter = TideDataTransformer.makePredictionDateFormatter(timeZone: timeZone)
         let visible = TideTableBuilder.visibleColumns(columns)
         var lines: [String] = []
         lines.append("Ebb & Flow — \(stationName)")
@@ -52,7 +49,7 @@ enum TideExporter {
             for column in visible {
                 switch column {
                 case .time:
-                    fields.append(csvDateFormatter.string(from: row.time))
+                    fields.append(formatter.string(from: row.time))
                 case .height:
                     fields.append(String(format: "%.1f ft", row.height))
                 case .kind:
@@ -68,9 +65,10 @@ enum TideExporter {
         rows: [TideTableRow],
         stationName: String,
         columns: Set<TideTableColumn> = Set(TideTableColumn.allCases),
-        maxLinesPerPage: Int = 40
+        maxLinesPerPage: Int = 40,
+        timeZone: TimeZone = TideDataTransformer.noaaLocalTimeZone
     ) -> [String] {
-        let lines = pdfTextLines(rows: rows, stationName: stationName, columns: columns)
+        let lines = pdfTextLines(rows: rows, stationName: stationName, columns: columns, timeZone: timeZone)
         guard !lines.isEmpty else { return [""] }
 
         var pages: [String] = []
@@ -87,18 +85,23 @@ enum TideExporter {
         rows: [TideTableRow],
         stationName: String,
         columns: Set<TideTableColumn> = Set(TideTableColumn.allCases),
-        maxLinesPerPage: Int = 40
+        maxLinesPerPage: Int = 40,
+        timeZone: TimeZone = TideDataTransformer.noaaLocalTimeZone
     ) -> Data {
         let pages = pdfTextPages(
             rows: rows,
             stationName: stationName,
             columns: columns,
-            maxLinesPerPage: maxLinesPerPage
+            maxLinesPerPage: maxLinesPerPage,
+            timeZone: timeZone
         )
         return buildPDF(from: pages)
     }
 
-    static func writeCSVFile(csv: String, stationID: String) throws -> URL {
+    static func writeCSVFile(
+        csv: String,
+        stationID: String
+    ) throws -> URL {
         let sanitizedID = stationID.replacingOccurrences(of: ",", with: "_")
         let filename = "ebb-flow-\(sanitizedID)-tides.csv"
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
@@ -111,13 +114,15 @@ enum TideExporter {
         stationName: String,
         stationID: String,
         columns: Set<TideTableColumn> = Set(TideTableColumn.allCases),
-        maxLinesPerPage: Int = 40
+        maxLinesPerPage: Int = 40,
+        timeZone: TimeZone = TideDataTransformer.noaaLocalTimeZone
     ) throws -> URL {
         let pdf = pdfData(
             rows: rows,
             stationName: stationName,
             columns: columns,
-            maxLinesPerPage: maxLinesPerPage
+            maxLinesPerPage: maxLinesPerPage,
+            timeZone: timeZone
         )
         let sanitizedID = stationID.replacingOccurrences(of: ",", with: "_")
         let filename = "ebb-flow-\(sanitizedID)-tides.pdf"

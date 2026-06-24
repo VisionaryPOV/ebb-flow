@@ -160,6 +160,28 @@ struct Phase2Tests {
         }
     }
 
+    @Test func displayAdjusterAppliesPersonalOffset() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)
+        let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let heights = try TideDataTransformer.parseHeights(from: heightsData, timeZone: Self.pacific)
+        let snapshot = TideSnapshot(
+            station: .marinaDelRey,
+            extremes: extremes,
+            heights: heights,
+            fetchedAt: Date(timeIntervalSince1970: 1_900_000_000)
+        )
+        let adjusted = TideDisplayAdjuster.adjustedSnapshot(snapshot, offset: 0.5)
+        #expect(adjusted.currentState.height == snapshot.currentState.height + 0.5)
+        #expect(adjusted.extremes.first?.height == extremes.first!.height + 0.5)
+    }
+
+    @Test func tableBuilderKeepsDefaultColumnsWhenSelectionEmpty() {
+        let rows = TideTableBuilder.rows(from: [], columns: [])
+        #expect(rows.isEmpty)
+        #expect(TideTableBuilder.visibleColumns([]).count == TideTableColumn.allCases.count)
+    }
+
     @Test func pdfExportWritesTemporaryFile() throws {
         let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
         let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)

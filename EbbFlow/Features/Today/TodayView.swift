@@ -34,8 +34,14 @@ struct TodayView: View {
         }
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Button("Export CSV") { presentCSVExport() }
-                Button("Export PDF") { presentPDFExport() }
+                if appModel.storeManager.canAccess(.export) {
+                    Button("Export CSV") { presentExport(.csv) }
+                    Button("Export PDF") { presentExport(.pdf) }
+                } else {
+                    Button("Export (Pro)") {
+                        appModel.errorMessage = "CSV and PDF export require Ebb & Flow Pro."
+                    }
+                }
             } label: {
                 Image(systemName: "square.and.arrow.up")
             }
@@ -57,6 +63,11 @@ struct TodayView: View {
             Text("Datum: \(appModel.selectedStation.datum) · Predictions only")
                 .font(.footnote)
                 .foregroundStyle(.white.opacity(0.75))
+            if appModel.personalOffsetFeet != 0 {
+                Text(String(format: "Personal offset: %+.1f ft", appModel.personalOffsetFeet))
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.7))
+            }
             TideStatusHUD(state: appModel.currentState)
         }
     }
@@ -67,7 +78,11 @@ struct TodayView: View {
             set: { newScale in Task { await appModel.setChartScale(newScale) } }
         )) {
             ForEach(ChartTimeScale.allCases) { scale in
-                Text(scale.label).tag(scale)
+                if scale == .month, !appModel.storeManager.canAccess(.monthlyCharts) {
+                    Text("\(scale.label) (Pro)").tag(scale)
+                } else {
+                    Text(scale.label).tag(scale)
+                }
             }
         }
         .pickerStyle(.segmented)
@@ -84,7 +99,7 @@ struct TodayView: View {
                 in: appModel.chartRange
             )
             let fill = WaveFillCalculator.fillLevel(
-                for: appModel.snapshot?.heights ?? [],
+                for: appModel.displaySnapshot?.heights ?? [],
                 at: appModel.selectedChartDate,
                 in: appModel.chartRange
             )
@@ -139,29 +154,11 @@ struct TodayView: View {
         return formatter.string(from: date)
     }
 
-    private func presentCSVExport() {
+    private func presentExport(_ kind: TideExportKind) {
         do {
-            let url = try TideExporter.writeCSVFile(
-                csv: appModel.exportCSV,
-                stationID: appModel.selectedStation.id
-            )
-            exportItem = TideExportItem(url: url)
+            exportItem = TideExportItem(url: try appModel.exportFileURL(kind: kind))
         } catch {
-            appModel.errorMessage = error.localizedDescription
-        }
-    }
-
-    private func presentPDFExport() {
-        do {
-            let url = try TideExporter.writePDFFile(
-                rows: appModel.tableRows,
-                stationName: appModel.selectedStation.name,
-                stationID: appModel.selectedStation.id,
-                columns: appModel.tableColumns
-            )
-            exportItem = TideExportItem(url: url)
-        } catch {
-            appModel.errorMessage = error.localizedDescription
+            appModel.errorMessage = "Export requires Ebb & Flow Pro."
         }
     }
 }

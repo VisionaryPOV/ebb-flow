@@ -33,13 +33,17 @@ enum TideTableBuilder {
         from extremes: [TideExtreme],
         columns: Set<TideTableColumn> = Set(TideTableColumn.allCases)
     ) -> [TideTableRow] {
-        guard !columns.isEmpty else { return [] }
+        guard !effectiveColumns(columns).isEmpty else { return [] }
         return extremes.sorted { $0.time < $1.time }.map {
             TideTableRow(time: $0.time, height: $0.height, kind: $0.kind)
         }
     }
 
+    static func effectiveColumns(_ selected: Set<TideTableColumn>) -> Set<TideTableColumn> {
+        selected.isEmpty ? Set(TideTableColumn.allCases) : selected
+    }
+
     static func visibleColumns(_ selected: Set<TideTableColumn>) -> [TideTableColumn] {
-        TideTableColumn.allCases.filter { selected.contains($0) }
+        TideTableColumn.allCases.filter { effectiveColumns(selected).contains($0) }
     }
 }

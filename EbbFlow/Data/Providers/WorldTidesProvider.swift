@@ -92,7 +92,7 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
             for extreme in extremes {
                 let date = Date(timeIntervalSince1970: TimeInterval(extreme.dt))
                 predictions.append([
-                    "t": TideDataTransformer.makePredictionDateFormatter(timeZone: .current).string(from: date),
+                    "t": TideDataTransformer.makePredictionDateFormatter(timeZone: TideDataTransformer.noaaLocalTimeZone).string(from: date),
                     "v": String(format: "%.3f", extreme.height),
                     "type": extreme.type == "High" ? "H" : "L"
                 ])
@@ -103,7 +103,7 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
             for height in heights {
                 let date = Date(timeIntervalSince1970: TimeInterval(height.dt))
                 predictions.append([
-                    "t": TideDataTransformer.makePredictionDateFormatter(timeZone: .current).string(from: date),
+                    "t": TideDataTransformer.makePredictionDateFormatter(timeZone: TideDataTransformer.noaaLocalTimeZone).string(from: date),
                     "v": String(format: "%.3f", height.height)
                 ])
             }

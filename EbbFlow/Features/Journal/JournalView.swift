@@ -50,6 +50,10 @@ struct JournalView: View {
     }
 
     private func saveEntry() {
+        guard appModel.storeManager.canAccess(.journalSync) else {
+            appModel.errorMessage = "Journal sync requires Ebb & Flow Pro."
+            return
+        }
         Task {
             var photoPath = ""
             if let path = await PhotoStorage.save(photoItem: photoItem, prefix: "journal") {

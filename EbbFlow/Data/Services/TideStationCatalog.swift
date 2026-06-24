@@ -12,4 +12,9 @@ enum TideStationCatalog {
     static func coordinateKey(for station: TideStation) -> String {
         "\(station.latitude),\(station.longitude)"
     }
+
+    static func timeZone(for station: TideStation) -> TimeZone {
+        // Catalog stations use NOAA local civil time; extend per-station as catalog grows.
+        TideDataTransformer.noaaLocalTimeZone
+    }
 }

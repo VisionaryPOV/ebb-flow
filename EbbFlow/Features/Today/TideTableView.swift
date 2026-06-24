@@ -13,7 +13,7 @@ struct TideTableView: View {
                 Menu("Columns") {
                     ForEach(TideTableColumn.allCases, id: \.self) { column in
                         Button {
-                            toggleColumn(column)
+                            appModel.toggleTableColumn(column)
                         } label: {
                             Label(column.header, systemImage: appModel.tableColumns.contains(column) ? "checkmark" : "")
                         }
@@ -43,14 +43,6 @@ struct TideTableView: View {
                 .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 .accessibilityLabel(row.kind.map { AccessibilityLabels.extreme(TideExtreme(time: row.time, height: row.height, kind: $0)) } ?? AccessibilityLabels.tideHeight(row.height))
             }
-        }
-    }
-
-    private func toggleColumn(_ column: TideTableColumn) {
-        if appModel.tableColumns.contains(column) {
-            appModel.tableColumns.remove(column)
-        } else {
-            appModel.tableColumns.insert(column)
         }
     }
 

@@ -54,6 +54,7 @@
 		77BC9691FB4F6019A5319D6E /* EbbFlowWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72678C5D62A4454DC582923C /* EbbFlowWatch.swift */; };
 		77EDC64A452B946802A29D1B /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ED959CCB692D2D607ABD88E /* TodayView.swift */; };
 		79629D8B0B768D332AEEC93D /* TideStatusHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96CCF071C2F22D01689DCD23 /* TideStatusHUD.swift */; };
+		7D9085AB36BA9A603FE609F6 /* TideDisplayAdjuster.swift in Sources */ = {isa = PBXBuildFile; fileRef = F64DCAD1E187E0ED2D48258C /* TideDisplayAdjuster.swift */; };
 		849CEB90B8A61114CDFE9B63 /* JournalEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DC0699A853647025D07B08 /* JournalEntry.swift */; };
 		87DBC5E753F03A506093AA82 /* TideCurveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD591E7C77CF22554EAE177 /* TideCurveTests.swift */; };
 		8B0FA62E1898BCCD19E72C40 /* CatalogTideFallbackProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EB55ED0885B0557A088998 /* CatalogTideFallbackProvider.swift */; };
@@ -72,6 +73,7 @@
 		A6B9CE330B535D58C14E32C6 /* NOAAResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6707BA4574CC53921ED2A834 /* NOAAResponses.swift */; };
 		A8FBB5D60E62237A7D4E3C4B /* FixtureLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA39C6A35DD08B3FC413C301 /* FixtureLoader.swift */; };
 		AD34CD4838E955A7EDC67078 /* NOAAClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7D93223CDD05107927D299 /* NOAAClientTests.swift */; };
+		B3855B397AD394581DFAC86D /* TideLiveActivityLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DCBC15B0653CB91DD660C3 /* TideLiveActivityLifecycle.swift */; };
 		B97567BA52A62E3B4E54C002 /* TideDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D1F7B123B478B44762C178 /* TideDataTransformer.swift */; };
 		C47DF74F3CC62A6C2E49D0E6 /* StationMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B234C0984CB94355837FBC8B /* StationMapView.swift */; };
 		C4B95AC7BDB938B3A69D7B1F /* TideExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AB3F4BC79050FB6D79C0AA /* TideExporter.swift */; };
@@ -240,7 +242,9 @@
 		F413D46832E26A49FF26C832 /* TestDateHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDateHolder.swift; sourceTree = "<group>"; };
 		F4EB55ED0885B0557A088998 /* CatalogTideFallbackProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogTideFallbackProvider.swift; sourceTree = "<group>"; };
 		F627B5F86EADEFE86791C177 /* CancellingOnceFixtureFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellingOnceFixtureFetcher.swift; sourceTree = "<group>"; };
+		F64DCAD1E187E0ED2D48258C /* TideDisplayAdjuster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideDisplayAdjuster.swift; sourceTree = "<group>"; };
 		F6D6A554F56E3D337D1A93C9 /* EbbFlowWatchWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EbbFlowWatchWidgets.entitlements; sourceTree = "<group>"; };
+		F7DCBC15B0653CB91DD660C3 /* TideLiveActivityLifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideLiveActivityLifecycle.swift; sourceTree = "<group>"; };
 		FF616A3CB5FCA9C706E75A99 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -275,6 +279,7 @@
 				5226754C9F0FFE80C8B36A45 /* StoreKitManager.swift */,
 				40D1F7B123B478B44762C178 /* TideDataTransformer.swift */,
 				6D6D21D2CAF20C4D497BF44D /* TideDateRangeCalculator.swift */,
+				F64DCAD1E187E0ED2D48258C /* TideDisplayAdjuster.swift */,
 				59AB3F4BC79050FB6D79C0AA /* TideExporter.swift */,
 				47E006FE088685BDCFE8A86E /* TideInterpolator.swift */,
 				1AFED0B907E9D28E09B53F64 /* TideSnapshotSharing.swift */,
@@ -326,6 +331,7 @@
 			children = (
 				380C77C4E769AA942086F5FC /* LiveActivityCoordinator.swift */,
 				938CF7B2F4ED56FFD7A78628 /* TideLiveActivity.swift */,
+				F7DCBC15B0653CB91DD660C3 /* TideLiveActivityLifecycle.swift */,
 			);
 			path = LiveActivity;
 			sourceTree = "<group>";
@@ -791,6 +797,7 @@
 				F15DE3547350F72762766FCC /* TideCurveChart.swift in Sources */,
 				B97567BA52A62E3B4E54C002 /* TideDataTransformer.swift in Sources */,
 				07FA3FA084C9020CBF40085A /* TideDateRangeCalculator.swift in Sources */,
+				7D9085AB36BA9A603FE609F6 /* TideDisplayAdjuster.swift in Sources */,
 				138E2FF0DD329DC7382024B1 /* TideExportPresenter.swift in Sources */,
 				C4B95AC7BDB938B3A69D7B1F /* TideExporter.swift in Sources */,
 				D53DA12A2C2B85AA8853542F /* TideExtreme.swift in Sources */,
@@ -800,6 +807,7 @@
 				C81DF2EEC4DA40B64567FC25 /* TideKind.swift in Sources */,
 				FC4C24AB5AAF9EB2190A3507 /* TideLiveActivity.swift in Sources */,
 				CCB779B368E24587DD741836 /* TideLiveActivityBuilder.swift in Sources */,
+				B3855B397AD394581DFAC86D /* TideLiveActivityLifecycle.swift in Sources */,
 				674B6F1F26D51FB2F2B821D1 /* TideNowPlayingBar.swift in Sources */,
 				55A592148AC565BE4D352D32 /* TideSnapshotSharing.swift in Sources */,
 				07CA61ECEB4416F76F3AE225 /* TideStation.swift in Sources */,
@@ -902,6 +910,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ebbflow.app.watch;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -999,6 +1008,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EbbFlowWatch/EbbFlowWatch.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_WKApplication = YES;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ebbflow.app;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebbflow.app.watch;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1044,6 +1055,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ebbflow.app.watch;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1194,6 +1206,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EbbFlowWatch/EbbFlowWatch.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_WKApplication = YES;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ebbflow.app;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebbflow.app.watch;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;

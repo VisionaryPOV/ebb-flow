@@ -54,6 +54,7 @@ struct SpotsView: View {
             let spot = spots[index]
             try? appModel.spotsStore.removeSpot(stationID: spot.stationID)
         }
+        appModel.notifySpotsChanged()
         reload()
     }
 }
@@ -146,6 +147,7 @@ private struct SpotEditorSheet: View {
             photoPath: photoPath,
             personalOffsetFeet: offset
         )
+        appModel.notifySpotsChanged()
         onSave()
         dismiss()
     }

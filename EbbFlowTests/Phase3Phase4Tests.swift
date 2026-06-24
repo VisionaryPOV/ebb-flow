@@ -321,6 +321,40 @@ struct Phase3Phase4Tests {
         #expect(timeline.refreshDate == now.addingTimeInterval(WatchTimelineBuilder.refreshInterval))
     }
 
+    @Test func liveActivityLifecycleChoosesUpdateForSameStation() {
+        let action = TideLiveActivityLifecycle.action(
+            existingStationID: "9410840",
+            newStationID: "9410840",
+            hasExistingActivity: true
+        )
+        #expect(action == .updateExisting)
+    }
+
+    @Test func liveActivityLifecycleEndsWhenStationChanges() {
+        let action = TideLiveActivityLifecycle.action(
+            existingStationID: "9410840",
+            newStationID: "9410660",
+            hasExistingActivity: true
+        )
+        #expect(action == .endAndRequest)
+    }
+
+    @Test @MainActor func spotsRevisionIncrementsWhenSpotUpdated() throws {
+        let schema = Schema([FavoriteSpot.self])
+        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [configuration])
+        let context = ModelContext(container)
+        let model = AppModel(modelContext: context, storeManager: StoreKitManager())
+
+        try model.spotsStore.addSpot(for: .marinaDelRey, notes: "Before")
+        #expect(model.spotsRevision == 0)
+        model.notifySpotsChanged()
+        #expect(model.spotsRevision == 1)
+        try model.spotsStore.updateSpot(stationID: "9410840", notes: "After", photoPath: nil, personalOffsetFeet: 0.5)
+        model.notifySpotsChanged()
+        #expect(model.spotsRevision == 2)
+    }
+
     @Test @MainActor func storeKitFeatureLabelsExist() {
         for feature in ProFeature.allCases {
             #expect(!StoreKitManager.featureLabel(feature).isEmpty)

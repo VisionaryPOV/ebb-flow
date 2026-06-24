@@ -3,7 +3,7 @@ import Foundation
 
 struct GetTideIntent: AppIntent {
     static let title: LocalizedStringResource = "Get Tide"
-    static let description = IntentDescription("Get the current tide for Marina del Rey.")
+    static let description = IntentDescription("Get the current tide for your selected station.")
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> {
         let payload = SharedTideDataStore.read()

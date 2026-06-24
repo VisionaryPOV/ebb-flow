@@ -3,11 +3,17 @@ import os
 import SwiftData
 import SwiftUI
 
+enum TideExportKind: Sendable {
+    case csv
+    case pdf
+}
+
 @MainActor
 @Observable
 final class AppModel {
     private static let logger = Logger(subsystem: "com.ebbflow.app", category: "TideLoad")
     private static let maxLoadAttempts = 3
+    private static let freeSpotLimit = 1
 
     var selectedStation: TideStation
     var snapshot: TideSnapshot?
@@ -21,11 +27,13 @@ final class AppModel {
     private let tideService: CompositeTideService
     let spotsStore: SpotsStore
     let journalStore: JournalStore
+    let storeManager: StoreKitManager
 
     init(
         modelContext: ModelContext,
         selectedStation: TideStation = .marinaDelRey,
-        tideService: CompositeTideService? = nil
+        tideService: CompositeTideService? = nil,
+        storeManager: StoreKitManager = StoreKitManager()
     ) {
         if let tideService {
             self.tideService = tideService
@@ -36,6 +44,7 @@ final class AppModel {
         }
         self.spotsStore = SpotsStore(modelContext: modelContext)
         self.journalStore = JournalStore(modelContext: modelContext)
+        self.storeManager = storeManager
         self.selectedStation = selectedStation
     }
 
@@ -55,8 +64,11 @@ final class AppModel {
                 days: chartScale.loadDays
             )
             snapshot = loaded
-            SharedTideDataStore.write(loaded)
-            await LiveActivityCoordinator.publish(snapshot: loaded)
+            let display = displaySnapshot(from: loaded)
+            SharedTideDataStore.write(display)
+            if storeManager.canAccess(.liveActivities) {
+                await LiveActivityCoordinator.publish(snapshot: display)
+            }
             Self.logger.info(
                 "Loaded station \(station.id, privacy: .public) scale=\(self.chartScale.rawValue, privacy: .public) extremes=\(loaded.extremes.count, privacy: .public) heights=\(loaded.heights.count, privacy: .public)"
             )
@@ -80,45 +92,106 @@ final class AppModel {
     }
 
     func setChartScale(_ scale: ChartTimeScale) async {
+        if scale == .month, !storeManager.canAccess(.monthlyCharts) {
+            errorMessage = "Monthly charts require Ebb & Flow Pro."
+            return
+        }
         chartScale = scale
         await load(station: selectedStation)
+    }
+
+    func notifySpotsChanged() {
+        spotsRevision += 1
+    }
+
+    func toggleTableColumn(_ column: TideTableColumn) {
+        if tableColumns.contains(column) {
+            guard tableColumns.count > 1 else { return }
+            tableColumns.remove(column)
+        } else {
+            tableColumns.insert(column)
+        }
+    }
+
+    func exportFileURL(kind: TideExportKind) throws -> URL {
+        guard storeManager.canAccess(.export) else {
+            throw TideServiceError.invalidRequest
+        }
+        let timeZone = exportTimeZone
+        switch kind {
+        case .csv:
+            return try TideExporter.writeCSVFile(csv: exportCSV(timeZone: timeZone), stationID: selectedStation.id)
+        case .pdf:
+            return try TideExporter.writePDFFile(
+                rows: tableRows,
+                stationName: selectedStation.name,
+                stationID: selectedStation.id,
+                columns: tableColumns,
+                timeZone: timeZone
+            )
+        }
     }
 
     var chartRange: ClosedRange<Date> {
         TideDateRangeCalculator.range(for: chartScale, containing: selectedChartDate)
     }
 
+    var personalOffsetFeet: Double {
+        (try? spotsStore.spot(stationID: selectedStation.id)?.personalOffsetFeet) ?? 0
+    }
+
+    var exportTimeZone: TimeZone {
+        TideStationCatalog.timeZone(for: selectedStation)
+    }
+
+    var displaySnapshot: TideSnapshot? {
+        guard let snapshot else { return nil }
+        return displaySnapshot(from: snapshot)
+    }
+
     var filteredHeights: [TideHeight] {
-        guard let snapshot else { return [] }
-        return TideDateRangeCalculator.filterHeights(snapshot.heights, in: chartRange)
+        guard let displaySnapshot else { return [] }
+        return TideDateRangeCalculator.filterHeights(displaySnapshot.heights, in: chartRange)
     }
 
     var filteredExtremes: [TideExtreme] {
-        guard let snapshot else { return [] }
-        return TideDateRangeCalculator.filterExtremes(snapshot.extremes, in: chartRange)
+        guard let displaySnapshot else { return [] }
+        return TideDateRangeCalculator.filterExtremes(displaySnapshot.extremes, in: chartRange)
     }
 
     var tableRows: [TideTableRow] {
         TideTableBuilder.rows(from: filteredExtremes, columns: tableColumns)
     }
 
-    var exportCSV: String {
-        TideExporter.csv(rows: tableRows, stationName: selectedStation.name, columns: tableColumns)
+    func exportCSV(timeZone: TimeZone? = nil) -> String {
+        TideExporter.csv(
+            rows: tableRows,
+            stationName: selectedStation.name,
+            columns: tableColumns,
+            timeZone: timeZone ?? exportTimeZone
+        )
     }
 
+    var exportCSV: String { exportCSV() }
+
     var exportPDF: Data {
-        TideExporter.pdfData(rows: tableRows, stationName: selectedStation.name, columns: tableColumns)
+        TideExporter.pdfData(
+            rows: tableRows,
+            stationName: selectedStation.name,
+            columns: tableColumns,
+            timeZone: exportTimeZone
+        )
     }
 
     var lunarContext: (MoonPhase, SolarTimes, [TideEnergyWindow])? {
-        guard let snapshot else { return nil }
+        guard let displaySnapshot else { return nil }
         let phase = LunarSolarEngine.moonPhase(for: selectedChartDate)
         let solar = LunarSolarEngine.solarTimes(
             for: selectedChartDate,
             latitude: selectedStation.latitude,
             longitude: selectedStation.longitude
         )
-        let windows = LunarSolarEngine.tideEnergyWindows(extremes: snapshot.extremes, solar: solar)
+        let windows = LunarSolarEngine.tideEnergyWindows(extremes: displaySnapshot.extremes, solar: solar)
         return (phase, solar, windows)
     }
 
@@ -135,17 +208,22 @@ final class AppModel {
             if try spotsStore.contains(stationID: selectedStation.id) {
                 try spotsStore.removeSpot(stationID: selectedStation.id)
             } else {
+                let count = try spotsStore.allSpots().count
+                if count >= Self.freeSpotLimit, !storeManager.canAccess(.unlimitedSpots) {
+                    errorMessage = "Upgrade to Pro for unlimited favorite spots."
+                    return
+                }
                 try spotsStore.addSpot(for: selectedStation)
             }
-            spotsRevision += 1
+            notifySpotsChanged()
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
     func logJournalEntry(notes: String, photoPath: String = "") {
-        guard let snapshot else { return }
-        let state = snapshot.currentState
+        guard let displaySnapshot else { return }
+        let state = displaySnapshot.currentState
         do {
             try journalStore.addEntry(
                 station: selectedStation,
@@ -164,6 +242,11 @@ final class AppModel {
     }
 
     var currentState: TideCurrentState {
-        snapshot?.currentState ?? TideCurrentState(height: 0, isRising: false, nextExtreme: nil, coversReferenceDate: false)
+        displaySnapshot?.currentState ?? TideCurrentState(height: 0, isRising: false, nextExtreme: nil, coversReferenceDate: false)
+    }
+
+    private func displaySnapshot(from snapshot: TideSnapshot) -> TideSnapshot {
+        let offset = (try? spotsStore.spot(stationID: snapshot.station.id)?.personalOffsetFeet) ?? 0
+        return TideDisplayAdjuster.adjustedSnapshot(snapshot, offset: offset)
     }
 }

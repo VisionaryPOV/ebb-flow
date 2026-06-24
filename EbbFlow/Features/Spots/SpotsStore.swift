@@ -30,6 +30,9 @@ final class SpotsStore {
         personalOffsetFeet: Double = 0
     ) throws {
         if let existing = try spot(stationID: station.id) {
+            if !photoPath.isEmpty, photoPath != existing.photoPath {
+                PhotoStorage.delete(path: existing.photoPath)
+            }
             existing.notes = notes
             existing.photoPath = photoPath
             existing.personalOffsetFeet = personalOffsetFeet
@@ -58,7 +61,12 @@ final class SpotsStore {
             throw TideServiceError.cacheMiss
         }
         if let notes { existing.notes = notes }
-        if let photoPath { existing.photoPath = photoPath }
+        if let photoPath {
+            if photoPath != existing.photoPath {
+                PhotoStorage.delete(path: existing.photoPath)
+            }
+            existing.photoPath = photoPath
+        }
         if let personalOffsetFeet { existing.personalOffsetFeet = personalOffsetFeet }
         try modelContext.save()
     }
@@ -68,6 +76,7 @@ final class SpotsStore {
             predicate: #Predicate { $0.stationID == stationID }
         )
         for spot in try modelContext.fetch(descriptor) {
+            PhotoStorage.delete(path: spot.photoPath)
             modelContext.delete(spot)
         }
         try modelContext.save()

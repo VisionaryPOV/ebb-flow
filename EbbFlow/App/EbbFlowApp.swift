@@ -52,6 +52,11 @@ struct EbbFlowApp: App {
                     NotificationCenter.default.post(name: .ebbFlowExportCSV, object: nil)
                 }
                 .keyboardShortcut("e", modifiers: [.command, .shift])
+
+                Button("Export PDF") {
+                    NotificationCenter.default.post(name: .ebbFlowExportPDF, object: nil)
+                }
+                .keyboardShortcut("p", modifiers: [.command, .shift])
             }
         }
     }

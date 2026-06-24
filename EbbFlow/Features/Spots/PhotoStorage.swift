@@ -30,4 +30,10 @@ enum PhotoStorage {
         }
         return Image(uiImage: uiImage)
     }
+
+    static func delete(path: String) {
+        guard !path.isEmpty else { return }
+        let url = documentsDirectory().appendingPathComponent(path)
+        try? FileManager.default.removeItem(at: url)
+    }
 }

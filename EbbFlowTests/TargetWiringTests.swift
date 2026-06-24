@@ -58,6 +58,17 @@ struct TargetWiringTests {
         #expect(pbxproj.contains("EbbFlowWatch"))
     }
 
+    @Test func projectYAMLDeclaresWatchCompanionBundleIDs() {
+        let yaml = Self.projectYAML
+        let ebbFlowBlock = Self.targetBlock(named: "EbbFlow", in: yaml) ?? ""
+        let watchBlock = Self.targetBlock(named: "EbbFlowWatch", in: yaml) ?? ""
+        #expect(ebbFlowBlock.contains("WKCompanionAppBundleIdentifier"))
+        #expect(ebbFlowBlock.contains("com.ebbflow.app.watch"))
+        #expect(watchBlock.contains("WKCompanionAppBundleIdentifier"))
+        #expect(watchBlock.contains("com.ebbflow.app"))
+        #expect(watchBlock.contains("WKApplication"))
+    }
+
     @Test func sharedConsumersDeclareAppGroupEntitlementsInProjectYAML() {
         let yaml = Self.projectYAML
         #expect(!yaml.isEmpty)

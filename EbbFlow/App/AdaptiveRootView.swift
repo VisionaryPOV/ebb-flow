@@ -1,5 +1,35 @@
 import SwiftUI
 
+enum AppFeature: String, CaseIterable, Hashable, Identifiable {
+    case today
+    case spots
+    case map
+    case journal
+    case more
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .today: "Today"
+        case .spots: "Spots"
+        case .map: "Map"
+        case .journal: "Journal"
+        case .more: "More"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .today: "water.waves"
+        case .spots: "mappin.and.ellipse"
+        case .map: "map"
+        case .journal: "book.closed"
+        case .more: "ellipsis.circle"
+        }
+    }
+}
+
 struct AdaptiveRootView: View {
     @Bindable var appModel: AppModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -16,6 +46,7 @@ struct AdaptiveRootView: View {
 private struct iPadSplitView: View {
     @Bindable var appModel: AppModel
     @State private var spots: [FavoriteSpot] = []
+    @State private var selectedFeature: AppFeature = .today
     @State private var selectedStationID: String?
 
     private var sidebarSpots: [FavoriteSpot] {
@@ -24,21 +55,47 @@ private struct iPadSplitView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(selection: $selectedStationID) {
+            List {
+                Section("Browse") {
+                    ForEach(AppFeature.allCases) { feature in
+                        Button {
+                            selectedFeature = feature
+                        } label: {
+                            Label(feature.title, systemImage: feature.icon)
+                        }
+                        .listRowBackground(
+                            selectedFeature == feature ? Color.accentColor.opacity(0.12) : Color.clear
+                        )
+                    }
+                }
                 Section("Current") {
-                    NavigationLink(value: appModel.selectedStation.id) {
+                    Button {
+                        selectedFeature = .today
+                        selectedStationID = appModel.selectedStation.id
+                    } label: {
                         Text(appModel.selectedStation.name)
                     }
+                    .listRowBackground(
+                        selectedFeature == .today && selectedStationID == appModel.selectedStation.id
+                            ? Color.accentColor.opacity(0.12)
+                            : Color.clear
+                    )
                 }
                 if !sidebarSpots.isEmpty {
                     Section("My Spots") {
                         ForEach(sidebarSpots, id: \.stationID) { spot in
-                            NavigationLink(value: spot.stationID) { Text(spot.name) }
+                            Button {
+                                selectedFeature = .today
+                                selectedStationID = spot.stationID
+                                Task { await appModel.load(station: spot.station) }
+                            } label: {
+                                Text(spot.name)
+                            }
                         }
                     }
                 }
             }
-            .navigationTitle("Stations")
+            .navigationTitle("Ebb & Flow")
             .refreshable { reloadSpots() }
             .task {
                 reloadSpots()
@@ -50,18 +107,26 @@ private struct iPadSplitView: View {
             .onChange(of: appModel.spotsRevision) { _, _ in
                 reloadSpots()
             }
-            .onChange(of: selectedStationID) { _, newID in
-                guard let newID, newID != appModel.selectedStation.id else { return }
-                if let spot = spots.first(where: { $0.stationID == newID }) {
-                    Task { await appModel.load(station: spot.station) }
-                } else if let station = TideStationCatalog.resolve(id: newID) {
-                    Task { await appModel.load(station: station) }
-                }
-            }
         } detail: {
             NavigationStack {
-                TodayView(appModel: appModel)
+                featureView(selectedFeature)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func featureView(_ feature: AppFeature) -> some View {
+        switch feature {
+        case .today:
+            TodayView(appModel: appModel)
+        case .spots:
+            SpotsView(appModel: appModel)
+        case .map:
+            StationMapView(station: appModel.selectedStation)
+        case .journal:
+            JournalView(appModel: appModel)
+        case .more:
+            MoreView(storeManager: appModel.storeManager)
         }
     }
 
@@ -88,7 +153,7 @@ private struct phoneTabView: View {
                 NavigationStack { JournalView(appModel: appModel) }
             }
             Tab("More", systemImage: "ellipsis.circle") {
-                NavigationStack { MoreView(storeManager: StoreKitManager()) }
+                NavigationStack { MoreView(storeManager: appModel.storeManager) }
             }
         }
         .tabBarMinimizeBehavior(.onScrollDown)
