@@ -56,6 +56,7 @@ final class AppModel {
             )
             snapshot = loaded
             SharedTideDataStore.write(loaded)
+            await LiveActivityCoordinator.publish(snapshot: loaded)
             Self.logger.info(
                 "Loaded station \(station.id, privacy: .public) scale=\(self.chartScale.rawValue, privacy: .public) extremes=\(loaded.extremes.count, privacy: .public) heights=\(loaded.heights.count, privacy: .public)"
             )

@@ -6,7 +6,7 @@ import Testing
 struct Phase3Phase4Tests {
     private static let pacific = TimeZone(identifier: "America/Los_Angeles")!
 
-    @Test func widgetTimelineBuilderProducesEntry() {
+    @Test func widgetTimelineBuilderProducesEntryFromSharedModule() {
         let payload = SharedTideSnapshotPayload(
             stationID: "9410840",
             stationName: "Marina del Rey",
@@ -17,9 +17,29 @@ struct Phase3Phase4Tests {
             nextExtremeHeight: 0.8,
             fetchedAt: Date()
         )
-        let entries = WidgetTimelineBuilder.entries(from: payload)
+        let now = Date(timeIntervalSince1970: 1_900_000_000)
+        let entries = WidgetTimelineBuilder.entries(from: payload, now: now)
         #expect(entries.count == 1)
         #expect(entries[0].payload.stationID == "9410840")
+        #expect(entries[0].refreshDate == now.addingTimeInterval(WidgetTimelineBuilder.refreshInterval))
+    }
+
+    @Test func sharedTideSnapshotPayloadMapsFromSnapshot() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)
+        let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let heights = try TideDataTransformer.parseHeights(from: heightsData, timeZone: Self.pacific)
+        let snapshot = TideSnapshot(
+            station: .marinaDelRey,
+            extremes: extremes,
+            heights: heights,
+            fetchedAt: Date(timeIntervalSince1970: 1_900_000_000)
+        )
+
+        let payload = SharedTideSnapshotPayload(snapshot: snapshot)
+        #expect(payload.stationID == "9410840")
+        #expect(payload.stationName == "Marina del Rey")
+        #expect(payload.fetchedAt == snapshot.fetchedAt)
     }
 
     @Test func liveActivityTimelineEntryFromPayload() {

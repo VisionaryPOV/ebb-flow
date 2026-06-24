@@ -79,6 +79,37 @@ struct AppModelLoadTests {
         #expect(await fetcher.fetchAttempts == 2)
     }
 
+    @Test func appModelPublishesSharedSnapshotPayloadOnLoad() async throws {
+        let context = try makeContext()
+        let extremesData = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let fetcher = FixtureTideFetcher(extremesData: extremesData, heightsData: heightsData)
+        let referenceDate = Self.pacificCalendar.date(from: DateComponents(
+            year: 2025, month: 6, day: 24, hour: 12
+        ))!
+        let cache = SwiftDataTideCache(modelContext: context)
+        let service = CompositeTideService(
+            client: fetcher,
+            cache: cache,
+            calendar: Self.pacificCalendar,
+            now: { referenceDate }
+        )
+        let model = AppModel(
+            modelContext: context,
+            tideService: service
+        )
+
+        await model.loadDefaultStation()
+
+        guard let snapshot = model.snapshot else {
+            Issue.record("Expected snapshot after load")
+            return
+        }
+        let payload = SharedTideSnapshotPayload(snapshot: snapshot)
+        #expect(payload.stationID == "9410840")
+        #expect(payload.currentHeight == snapshot.currentState.height)
+    }
+
     @Test func isTransientCancellationDetectsCancellationErrors() {
         #expect(AppModel.isTransientCancellation(CancellationError()))
         #expect(AppModel.isTransientCancellation(URLError(.cancelled)))

@@ -25,6 +25,10 @@ targets:
         buildPhase: resources
     entitlements:
       path: EbbFlow/EbbFlow.entitlements
+    dependencies:
+      - target: EbbFlowWidgets
+        embed: true
+        platformFilter: iOS
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app
@@ -51,15 +55,22 @@ targets:
     platform: iOS
     sources:
       - path: EbbFlowWidgets
+      - path: Shared
     entitlements:
       path: EbbFlowWidgets/EbbFlowWidgets.entitlements
+    info:
+      path: EbbFlowWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: "Ebb & Flow Widgets"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.EbbFlowWidgets
         PRODUCT_NAME: EbbFlowWidgets
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: "Ebb & Flow Widgets"
-        INFOPLIST_KEY_NSExtension: "{NSExtensionPointIdentifier: com.apple.widgetkit-extension}"
         IPHONEOS_DEPLOYMENT_TARGET: "26.0"
         SKIP_INSTALL: YES
   EbbFlowWatch:

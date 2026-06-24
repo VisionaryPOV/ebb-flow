@@ -10,6 +10,13 @@ struct TargetWiringTests {
         return (try? String(contentsOf: url, encoding: .utf8)) ?? ""
     }
 
+    @Test func ebbFlowEmbedsIOSWidgetsExtension() {
+        let pbxproj = Self.projectContents
+        #expect(!pbxproj.isEmpty)
+        #expect(pbxproj.contains("EbbFlowWidgets.appex in Embed"))
+        #expect(pbxproj.contains("PBXCopyFilesBuildPhase"))
+    }
+
     @Test func ebbFlowWatchEmbedsWatchWidgetsExtension() {
         let pbxproj = Self.projectContents
         #expect(!pbxproj.isEmpty)
@@ -22,8 +29,9 @@ struct TargetWiringTests {
         #expect(pbxproj.contains("PBXCopyFilesBuildPhase"))
     }
 
-    @Test func ebbFlowWatchTargetDependsOnWatchWidgets() {
+    @Test func mainAndWatchTargetsDeclareWidgetDependencies() {
         let pbxproj = Self.projectContents
+        #expect(pbxproj.contains("EbbFlowWidgets"))
         #expect(pbxproj.contains("EbbFlowWatchWidgets"))
         #expect(pbxproj.contains("EbbFlowWatch"))
     }
