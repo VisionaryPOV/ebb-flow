@@ -19,6 +19,12 @@ struct AppModelLoadTests {
         return ModelContext(container)
     }
 
+    private static var pacificCalendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = pacific
+        return calendar
+    }
+
     @Test func defaultStationLoadsMarinaDelReyData() async throws {
         let context = try makeContext()
         let extremesData = try FixtureLoader.data(named: "marina_del_rey_hilo")
@@ -44,9 +50,40 @@ struct AppModelLoadTests {
         #expect(snapshot.currentState.coversReferenceDate)
     }
 
-    private static var pacificCalendar: Calendar {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = pacific
-        return calendar
+    @Test func appModelRetriesAfterTransientCancellation() async throws {
+        let context = try makeContext()
+        let extremesData = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let fetcher = CancellingOnceFixtureFetcher(extremesData: extremesData, heightsData: heightsData)
+        let referenceDate = Self.pacificCalendar.date(from: DateComponents(
+            year: 2025, month: 6, day: 24, hour: 12
+        ))!
+        let cache = SwiftDataTideCache(modelContext: context)
+        let service = CompositeTideService(
+            client: fetcher,
+            cache: cache,
+            calendar: Self.pacificCalendar,
+            now: { referenceDate }
+        )
+        let model = AppModel(
+            modelContext: context,
+            tideService: service
+        )
+
+        await model.loadDefaultStation()
+
+        #expect(model.snapshot != nil)
+        #expect(model.snapshot?.station.id == "9410840")
+        #expect(model.snapshot?.extremes.count == 6)
+        #expect(model.errorMessage == nil)
+        #expect(await fetcher.fetchAttempts == 2)
+    }
+
+    @Test func isTransientCancellationDetectsCancellationErrors() {
+        #expect(AppModel.isTransientCancellation(CancellationError()))
+        #expect(AppModel.isTransientCancellation(URLError(.cancelled)))
+        #expect(AppModel.isTransientCancellation(CancellingFixtureError.cancelled))
+        #expect(AppModel.isTransientCancellation(NSError(domain: NSURLErrorDomain, code: NSURLErrorCancelled)) == true)
+        #expect(AppModel.isTransientCancellation(TideServiceError.networkFailure) == false)
     }
 }

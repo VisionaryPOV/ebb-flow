@@ -7,6 +7,7 @@ import SwiftUI
 @Observable
 final class AppModel {
     private static let logger = Logger(subsystem: "com.ebbflow.app", category: "TideLoad")
+    private static let maxLoadAttempts = 3
 
     var selectedStation: TideStation
     var snapshot: TideSnapshot?
@@ -17,10 +18,18 @@ final class AppModel {
     private let tideService: CompositeTideService
     let spotsStore: SpotsStore
 
-    init(modelContext: ModelContext, selectedStation: TideStation = .marinaDelRey) {
-        let cache = SwiftDataTideCache(modelContext: modelContext)
-        let client = NOAADataGetterClient()
-        self.tideService = CompositeTideService(client: client, cache: cache)
+    init(
+        modelContext: ModelContext,
+        selectedStation: TideStation = .marinaDelRey,
+        tideService: CompositeTideService? = nil
+    ) {
+        if let tideService {
+            self.tideService = tideService
+        } else {
+            let cache = SwiftDataTideCache(modelContext: modelContext)
+            let client = NOAADataGetterClient()
+            self.tideService = CompositeTideService(client: client, cache: cache)
+        }
         self.spotsStore = SpotsStore(modelContext: modelContext)
         self.selectedStation = selectedStation
     }
@@ -29,7 +38,7 @@ final class AppModel {
         await load(station: selectedStation)
     }
 
-    func load(station: TideStation) async {
+    func load(station: TideStation, attempt: Int = 1) async {
         selectedStation = station
         isLoading = true
         errorMessage = nil
@@ -50,10 +59,28 @@ final class AppModel {
                 loaded.currentState.coversReferenceDate ? "YES" : "NO"
             )
         } catch {
+            if attempt < Self.maxLoadAttempts, Self.isTransientCancellation(error) {
+                NSLog(
+                    "EbbFlow TideLoad: Retrying station %@ after cancellation (attempt %ld)",
+                    station.id,
+                    attempt + 1
+                )
+                try? await Task.sleep(nanoseconds: 250_000_000)
+                await load(station: station, attempt: attempt + 1)
+                return
+            }
             errorMessage = error.localizedDescription
             Self.logger.error("Failed to load station \(station.id, privacy: .public): \(error.localizedDescription, privacy: .public)")
             NSLog("EbbFlow TideLoad: Failed station %@ error=%@", station.id, error.localizedDescription)
         }
+    }
+
+    static func isTransientCancellation(_ error: Error) -> Bool {
+        if error is CancellationError { return true }
+        if let urlError = error as? URLError, urlError.code == .cancelled { return true }
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled { return true }
+        return error.localizedDescription.lowercased().contains("cancelled")
     }
 
     func toggleFavorite() {

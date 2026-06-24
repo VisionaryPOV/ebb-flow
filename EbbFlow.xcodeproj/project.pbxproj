@@ -18,6 +18,7 @@
 		2AEF7D437435FEAF3C184141 /* AppModelLoadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFF2BD17A1EABCC8A001023 /* AppModelLoadTests.swift */; };
 		34A726BF36299A84B17A558F /* InMemoryTideCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11210C467DB056CDEE63B538 /* InMemoryTideCache.swift */; };
 		41325919946C61B8B52A5894 /* TestDateHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F413D46832E26A49FF26C832 /* TestDateHolder.swift */; };
+		49B442BD872D4661A9A85740 /* CancellingOnceFixtureFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F627B5F86EADEFE86791C177 /* CancellingOnceFixtureFetcher.swift */; };
 		50D54841E32D28597A457EF8 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB653052A40AC61A0AA2FC /* MoreView.swift */; };
 		5DBE510167357033D4D35B23 /* EbbFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */; };
 		640BEA3ABC5C898E357D4E8B /* TideInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E006FE088685BDCFE8A86E /* TideInterpolator.swift */; };
@@ -93,6 +94,7 @@
 		E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowApp.swift; sourceTree = "<group>"; };
 		F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureTideFetcher.swift; sourceTree = "<group>"; };
 		F413D46832E26A49FF26C832 /* TestDateHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDateHolder.swift; sourceTree = "<group>"; };
+		F627B5F86EADEFE86791C177 /* CancellingOnceFixtureFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellingOnceFixtureFetcher.swift; sourceTree = "<group>"; };
 		FF616A3CB5FCA9C706E75A99 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -189,6 +191,7 @@
 		9C0A88EE4EDF73A430E62752 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				F627B5F86EADEFE86791C177 /* CancellingOnceFixtureFetcher.swift */,
 				DA39C6A35DD08B3FC413C301 /* FixtureLoader.swift */,
 				F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */,
 				11210C467DB056CDEE63B538 /* InMemoryTideCache.swift */,
@@ -371,6 +374,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2AEF7D437435FEAF3C184141 /* AppModelLoadTests.swift in Sources */,
+				49B442BD872D4661A9A85740 /* CancellingOnceFixtureFetcher.swift in Sources */,
 				A8FBB5D60E62237A7D4E3C4B /* FixtureLoader.swift in Sources */,
 				E8D06DA386AEAE2E1567993C /* FixtureTideFetcher.swift in Sources */,
 				34A726BF36299A84B17A558F /* InMemoryTideCache.swift in Sources */,

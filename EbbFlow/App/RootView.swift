@@ -11,6 +11,7 @@ struct RootView: View {
 
 private struct AppRootContent: View {
     @State private var appModel: AppModel
+    @State private var initialLoadStarted = false
 
     init(modelContext: ModelContext) {
         _appModel = State(wrappedValue: AppModel(modelContext: modelContext))
@@ -18,8 +19,12 @@ private struct AppRootContent: View {
 
     var body: some View {
         MainTabView(appModel: appModel)
-            .task {
-                await appModel.loadDefaultStation()
+            .onAppear {
+                guard !initialLoadStarted else { return }
+                initialLoadStarted = true
+                Task {
+                    await appModel.loadDefaultStation()
+                }
             }
     }
 }
