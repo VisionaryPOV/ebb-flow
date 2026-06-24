@@ -7,7 +7,8 @@ struct EbbFlowApp: App {
         let schema = Schema([
             FavoriteSpot.self,
             CachedTideExtremeRecord.self,
-            CachedTideHeightRecord.self
+            CachedTideHeightRecord.self,
+            CachedTideMetadataRecord.self
         ])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {

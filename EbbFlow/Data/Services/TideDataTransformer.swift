@@ -1,18 +1,23 @@
 import Foundation
 
 enum TideDataTransformer {
-    static let predictionDateFormatter: DateFormatter = {
+    /// NOAA `lst_ldt` responses use the station's local civil time.
+    static let noaaLocalTimeZone = TimeZone(identifier: "America/Los_Angeles")!
+
+    static func makePredictionDateFormatter(timeZone: TimeZone) -> DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.timeZone = timeZone
         formatter.dateFormat = "yyyy-MM-dd HH:mm"
         return formatter
-    }()
+    }
 
-    static func parseExtremes(from data: Data, timeZone: TimeZone = .current) throws -> [TideExtreme] {
+    static func parseExtremes(
+        from data: Data,
+        timeZone: TimeZone = noaaLocalTimeZone
+    ) throws -> [TideExtreme] {
         let response = try JSONDecoder().decode(NOAAPredictionsResponse.self, from: data)
-        let formatter = predictionDateFormatter
-        formatter.timeZone = timeZone
+        let formatter = makePredictionDateFormatter(timeZone: timeZone)
 
         return response.predictions.compactMap { entry in
             guard let kindRaw = entry.type,
@@ -26,10 +31,12 @@ enum TideDataTransformer {
         .sorted { $0.time < $1.time }
     }
 
-    static func parseHeights(from data: Data, timeZone: TimeZone = .current) throws -> [TideHeight] {
+    static func parseHeights(
+        from data: Data,
+        timeZone: TimeZone = noaaLocalTimeZone
+    ) throws -> [TideHeight] {
         let response = try JSONDecoder().decode(NOAAPredictionsResponse.self, from: data)
-        let formatter = predictionDateFormatter
-        formatter.timeZone = timeZone
+        let formatter = makePredictionDateFormatter(timeZone: timeZone)
 
         return response.predictions.compactMap { entry in
             guard let time = formatter.date(from: entry.t),
@@ -47,10 +54,12 @@ enum TideDataTransformer {
         extremes: [TideExtreme]
     ) -> TideCurrentState {
         guard !heights.isEmpty else {
-            return TideCurrentState(height: 0, isRising: false, nextExtreme: extremes.first)
+            return TideCurrentState(height: 0, isRising: false, nextExtreme: extremes.first, coversReferenceDate: false)
         }
 
         let sortedHeights = heights.sorted { $0.time < $1.time }
+        let coversReferenceDate = sortedHeights.first!.time <= date && sortedHeights.last!.time >= date
+
         let nearest = sortedHeights.min { lhs, rhs in
             abs(lhs.time.timeIntervalSince(date)) < abs(rhs.time.timeIntervalSince(date))
         }
@@ -69,7 +78,12 @@ enum TideDataTransformer {
             isRising = false
         }
 
-        return TideCurrentState(height: height, isRising: isRising, nextExtreme: nextExtreme)
+        return TideCurrentState(
+            height: height,
+            isRising: isRising,
+            nextExtreme: nextExtreme,
+            coversReferenceDate: coversReferenceDate
+        )
     }
 }
 
@@ -77,4 +91,17 @@ struct TideCurrentState: Sendable, Equatable {
     let height: Double
     let isRising: Bool
     let nextExtreme: TideExtreme?
+    let coversReferenceDate: Bool
+
+    init(
+        height: Double,
+        isRising: Bool,
+        nextExtreme: TideExtreme?,
+        coversReferenceDate: Bool = true
+    ) {
+        self.height = height
+        self.isRising = isRising
+        self.nextExtreme = nextExtreme
+        self.coversReferenceDate = coversReferenceDate
+    }
 }

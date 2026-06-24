@@ -45,6 +45,17 @@ final class CachedTideHeightRecord {
     }
 }
 
+@Model
+final class CachedTideMetadataRecord {
+    @Attribute(.unique) var stationID: String
+    var fetchedAt: Date
+
+    init(stationID: String, fetchedAt: Date) {
+        self.stationID = stationID
+        self.fetchedAt = fetchedAt
+    }
+}
+
 @MainActor
 final class SwiftDataTideCache: TideCacheStoring {
     private let modelContext: ModelContext
@@ -73,7 +84,19 @@ final class SwiftDataTideCache: TideCacheStoring {
         return records.map(\.tideHeight)
     }
 
-    func store(extremes: [TideExtreme], heights: [TideHeight], stationID: String) async throws {
+    func cachedFetchedAt(stationID: String) async -> Date? {
+        let descriptor = FetchDescriptor<CachedTideMetadataRecord>(
+            predicate: #Predicate { $0.stationID == stationID }
+        )
+        return try? modelContext.fetch(descriptor).first?.fetchedAt
+    }
+
+    func store(
+        extremes: [TideExtreme],
+        heights: [TideHeight],
+        stationID: String,
+        fetchedAt: Date
+    ) async throws {
         try deleteExisting(stationID: stationID)
 
         for extreme in extremes {
@@ -82,6 +105,7 @@ final class SwiftDataTideCache: TideCacheStoring {
         for height in heights {
             modelContext.insert(CachedTideHeightRecord(stationID: stationID, height: height))
         }
+        modelContext.insert(CachedTideMetadataRecord(stationID: stationID, fetchedAt: fetchedAt))
         try modelContext.save()
     }
 
@@ -92,11 +116,17 @@ final class SwiftDataTideCache: TideCacheStoring {
         let heightDescriptor = FetchDescriptor<CachedTideHeightRecord>(
             predicate: #Predicate { $0.stationID == stationID }
         )
+        let metadataDescriptor = FetchDescriptor<CachedTideMetadataRecord>(
+            predicate: #Predicate { $0.stationID == stationID }
+        )
 
         for record in try modelContext.fetch(extremeDescriptor) {
             modelContext.delete(record)
         }
         for record in try modelContext.fetch(heightDescriptor) {
+            modelContext.delete(record)
+        }
+        for record in try modelContext.fetch(metadataDescriptor) {
             modelContext.delete(record)
         }
     }

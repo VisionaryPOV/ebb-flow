@@ -1,10 +1,13 @@
 import Foundation
+import os
 import SwiftData
 import SwiftUI
 
 @MainActor
 @Observable
 final class AppModel {
+    private static let logger = Logger(subsystem: "com.ebbflow.app", category: "TideLoad")
+
     var selectedStation: TideStation
     var snapshot: TideSnapshot?
     var isLoading = false
@@ -33,9 +36,23 @@ final class AppModel {
         defer { isLoading = false }
 
         do {
-            snapshot = try await tideService.loadTideData(for: station)
+            let loaded = try await tideService.loadTideData(for: station)
+            snapshot = loaded
+            Self.logger.info(
+                "Loaded default station \(station.id, privacy: .public) \(station.name, privacy: .public) extremes=\(loaded.extremes.count, privacy: .public) heights=\(loaded.heights.count, privacy: .public) fetchedAt=\(loaded.fetchedAt.timeIntervalSince1970, privacy: .public)"
+            )
+            NSLog(
+                "EbbFlow TideLoad: Loaded station %@ (%@) extremes=%ld heights=%ld coversToday=%@",
+                station.id,
+                station.name,
+                loaded.extremes.count,
+                loaded.heights.count,
+                loaded.currentState.coversReferenceDate ? "YES" : "NO"
+            )
         } catch {
             errorMessage = error.localizedDescription
+            Self.logger.error("Failed to load station \(station.id, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            NSLog("EbbFlow TideLoad: Failed station %@ error=%@", station.id, error.localizedDescription)
         }
     }
 
@@ -56,6 +73,6 @@ final class AppModel {
     }
 
     var currentState: TideCurrentState {
-        snapshot?.currentState ?? TideCurrentState(height: 0, isRising: false, nextExtreme: nil)
+        snapshot?.currentState ?? TideCurrentState(height: 0, isRising: false, nextExtreme: nil, coversReferenceDate: false)
     }
 }

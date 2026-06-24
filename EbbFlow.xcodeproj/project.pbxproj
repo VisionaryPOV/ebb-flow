@@ -15,7 +15,9 @@
 		1CF5F66B9FC33360B6329D0B /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0550738E3A7B482CECE97A /* AppModel.swift */; };
 		1F1664F66383B61D85348694 /* FavoriteSpot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58C48B4D57B0A5D05473814 /* FavoriteSpot.swift */; };
 		226F60389B804AF7C64B7167 /* marina_del_rey_hilo.json in Resources */ = {isa = PBXBuildFile; fileRef = E1E99D61DB9E40EDF76D74B2 /* marina_del_rey_hilo.json */; };
+		2AEF7D437435FEAF3C184141 /* AppModelLoadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFF2BD17A1EABCC8A001023 /* AppModelLoadTests.swift */; };
 		34A726BF36299A84B17A558F /* InMemoryTideCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11210C467DB056CDEE63B538 /* InMemoryTideCache.swift */; };
+		41325919946C61B8B52A5894 /* TestDateHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F413D46832E26A49FF26C832 /* TestDateHolder.swift */; };
 		50D54841E32D28597A457EF8 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB653052A40AC61A0AA2FC /* MoreView.swift */; };
 		5DBE510167357033D4D35B23 /* EbbFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */; };
 		640BEA3ABC5C898E357D4E8B /* TideInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E006FE088685BDCFE8A86E /* TideInterpolator.swift */; };
@@ -37,6 +39,7 @@
 		CBEACC049D285AEE19A3C5C9 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF616A3CB5FCA9C706E75A99 /* RootView.swift */; };
 		D11E51957695BF83FA1910C2 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F58063EED13E029E95AEF92 /* Theme.swift */; };
 		D53DA12A2C2B85AA8853542F /* TideExtreme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D505ED0A051ADB6D6F9EF3F2 /* TideExtreme.swift */; };
+		DB0D2B574812F6124E955484 /* SwiftDataTideCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36759E0F8E240E0C6450E17C /* SwiftDataTideCacheTests.swift */; };
 		E88263FF3B87916260667F85 /* SkyGradientEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246E14EF8618AA4CCE64B020 /* SkyGradientEngine.swift */; };
 		E8D06DA386AEAE2E1567993C /* FixtureTideFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */; };
 		F15DE3547350F72762766FCC /* TideCurveChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A201BABDF146CC0A631C162 /* TideCurveChart.swift */; };
@@ -61,6 +64,7 @@
 		246E14EF8618AA4CCE64B020 /* SkyGradientEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyGradientEngine.swift; sourceTree = "<group>"; };
 		2ACDE75FC1A2C142E2E18AAE /* TideHeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideHeight.swift; sourceTree = "<group>"; };
 		2C0550738E3A7B482CECE97A /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		36759E0F8E240E0C6450E17C /* SwiftDataTideCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataTideCacheTests.swift; sourceTree = "<group>"; };
 		38DEC323044195095B422301 /* SpotsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsStoreTests.swift; sourceTree = "<group>"; };
 		3BD591E7C77CF22554EAE177 /* TideCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideCurveTests.swift; sourceTree = "<group>"; };
 		40D1F7B123B478B44762C178 /* TideDataTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideDataTransformer.swift; sourceTree = "<group>"; };
@@ -79,6 +83,7 @@
 		9F58063EED13E029E95AEF92 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		A2807E8D45B1D6AA70F54709 /* SpotsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsStore.swift; sourceTree = "<group>"; };
 		A3FC702461CC53ED43BC72A4 /* marina_del_rey_heights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = marina_del_rey_heights.json; sourceTree = "<group>"; };
+		AFFF2BD17A1EABCC8A001023 /* AppModelLoadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelLoadTests.swift; sourceTree = "<group>"; };
 		C58C48B4D57B0A5D05473814 /* FavoriteSpot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSpot.swift; sourceTree = "<group>"; };
 		CA858A9DAAAB863306BE8E27 /* EbbFlow.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = EbbFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D505ED0A051ADB6D6F9EF3F2 /* TideExtreme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideExtreme.swift; sourceTree = "<group>"; };
@@ -87,6 +92,7 @@
 		E1E99D61DB9E40EDF76D74B2 /* marina_del_rey_hilo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = marina_del_rey_hilo.json; sourceTree = "<group>"; };
 		E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowApp.swift; sourceTree = "<group>"; };
 		F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureTideFetcher.swift; sourceTree = "<group>"; };
+		F413D46832E26A49FF26C832 /* TestDateHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDateHolder.swift; sourceTree = "<group>"; };
 		FF616A3CB5FCA9C706E75A99 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -186,6 +192,7 @@
 				DA39C6A35DD08B3FC413C301 /* FixtureLoader.swift */,
 				F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */,
 				11210C467DB056CDEE63B538 /* InMemoryTideCache.swift */,
+				F413D46832E26A49FF26C832 /* TestDateHolder.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -260,9 +267,11 @@
 			children = (
 				CC8CA62D419B86139802DFCA /* Fixtures */,
 				9C0A88EE4EDF73A430E62752 /* Support */,
+				AFFF2BD17A1EABCC8A001023 /* AppModelLoadTests.swift */,
 				1E7D93223CDD05107927D299 /* NOAAClientTests.swift */,
 				46A25168C43C13EC411A7F3A /* SkyGradientEngineTests.swift */,
 				38DEC323044195095B422301 /* SpotsStoreTests.swift */,
+				36759E0F8E240E0C6450E17C /* SwiftDataTideCacheTests.swift */,
 				3BD591E7C77CF22554EAE177 /* TideCurveTests.swift */,
 			);
 			path = EbbFlowTests;
@@ -361,12 +370,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AEF7D437435FEAF3C184141 /* AppModelLoadTests.swift in Sources */,
 				A8FBB5D60E62237A7D4E3C4B /* FixtureLoader.swift in Sources */,
 				E8D06DA386AEAE2E1567993C /* FixtureTideFetcher.swift in Sources */,
 				34A726BF36299A84B17A558F /* InMemoryTideCache.swift in Sources */,
 				AD34CD4838E955A7EDC67078 /* NOAAClientTests.swift in Sources */,
 				1CA6321EDD4033766DF5CA18 /* SkyGradientEngineTests.swift in Sources */,
 				66016398F88294A414D14FE1 /* SpotsStoreTests.swift in Sources */,
+				DB0D2B574812F6124E955484 /* SwiftDataTideCacheTests.swift in Sources */,
+				41325919946C61B8B52A5894 /* TestDateHolder.swift in Sources */,
 				87DBC5E753F03A506093AA82 /* TideCurveTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -3,20 +3,24 @@ import SwiftUI
 
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var appModel: AppModel?
 
     var body: some View {
-        Group {
-            if let appModel {
-                MainTabView(appModel: appModel)
-            } else {
-                ProgressView("Loading Ebb & Flow…")
-                    .task {
-                        appModel = AppModel(modelContext: modelContext)
-                        await appModel?.loadDefaultStation()
-                    }
+        AppRootContent(modelContext: modelContext)
+    }
+}
+
+private struct AppRootContent: View {
+    @State private var appModel: AppModel
+
+    init(modelContext: ModelContext) {
+        _appModel = State(wrappedValue: AppModel(modelContext: modelContext))
+    }
+
+    var body: some View {
+        MainTabView(appModel: appModel)
+            .task {
+                await appModel.loadDefaultStation()
             }
-        }
     }
 }
 

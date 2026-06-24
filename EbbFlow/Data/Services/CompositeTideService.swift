@@ -3,38 +3,61 @@ import Foundation
 protocol TideCacheStoring: Sendable {
     func cachedExtremes(stationID: String) async -> [TideExtreme]?
     func cachedHeights(stationID: String) async -> [TideHeight]?
-    func store(extremes: [TideExtreme], heights: [TideHeight], stationID: String) async throws
+    func cachedFetchedAt(stationID: String) async -> Date?
+    func store(
+        extremes: [TideExtreme],
+        heights: [TideHeight],
+        stationID: String,
+        fetchedAt: Date
+    ) async throws
 }
 
+typealias DateProvider = @Sendable () -> Date
+
 actor CompositeTideService {
+    static let cacheTTL: TimeInterval = 6 * 60 * 60
+
     private let client: any TidePredictionFetching
     private let cache: any TideCacheStoring
     private let calendar: Calendar
+    private let now: DateProvider
 
     init(
         client: any TidePredictionFetching,
         cache: any TideCacheStoring,
-        calendar: Calendar = .current
+        calendar: Calendar = .current,
+        now: @escaping DateProvider = { Date() }
     ) {
         self.client = client
         self.cache = cache
         self.calendar = calendar
+        self.now = now
     }
 
-    func loadTideData(for station: TideStation) async throws -> TideSnapshot {
-        if let cachedExtremes = await cache.cachedExtremes(stationID: station.id),
+    func loadTideData(for station: TideStation, forceRefresh: Bool = false) async throws -> TideSnapshot {
+        let referenceDate = now()
+
+        if !forceRefresh,
+           let cachedExtremes = await cache.cachedExtremes(stationID: station.id),
            let cachedHeights = await cache.cachedHeights(stationID: station.id),
+           let fetchedAt = await cache.cachedFetchedAt(stationID: station.id),
            !cachedExtremes.isEmpty,
-           !cachedHeights.isEmpty {
+           !cachedHeights.isEmpty,
+           isCacheValid(
+               heights: cachedHeights,
+               fetchedAt: fetchedAt,
+               referenceDate: referenceDate
+           ) {
             return TideSnapshot(
                 station: station,
                 extremes: cachedExtremes,
                 heights: cachedHeights,
-                fetchedAt: Date()
+                fetchedAt: fetchedAt,
+                referenceDate: referenceDate
             )
         }
 
-        let start = calendar.startOfDay(for: Date())
+        let start = calendar.startOfDay(for: referenceDate)
         let end = calendar.date(byAdding: .day, value: 2, to: start) ?? start
 
         let extremesData = try await client.fetchExtremes(
@@ -51,31 +74,41 @@ actor CompositeTideService {
 
         let extremes = try TideDataTransformer.parseExtremes(from: extremesData)
         let heights = try TideDataTransformer.parseHeights(from: heightsData)
+        let fetchedAt = now()
 
-        try await cache.store(extremes: extremes, heights: heights, stationID: station.id)
+        try await cache.store(
+            extremes: extremes,
+            heights: heights,
+            stationID: station.id,
+            fetchedAt: fetchedAt
+        )
 
         return TideSnapshot(
             station: station,
             extremes: extremes,
             heights: heights,
-            fetchedAt: Date()
+            fetchedAt: fetchedAt,
+            referenceDate: referenceDate
         )
     }
 
-    func loadTideDataFromFixture(
-        station: TideStation,
-        extremesData: Data,
-        heightsData: Data
-    ) async throws -> TideSnapshot {
-        let extremes = try TideDataTransformer.parseExtremes(from: extremesData)
-        let heights = try TideDataTransformer.parseHeights(from: heightsData)
-        try await cache.store(extremes: extremes, heights: heights, stationID: station.id)
-        return TideSnapshot(
-            station: station,
-            extremes: extremes,
-            heights: heights,
-            fetchedAt: Date()
-        )
+    func isCacheValid(
+        heights: [TideHeight],
+        fetchedAt: Date,
+        referenceDate: Date
+    ) -> Bool {
+        guard referenceDate.timeIntervalSince(fetchedAt) < Self.cacheTTL else {
+            return false
+        }
+
+        let windowStart = calendar.startOfDay(for: referenceDate)
+        let windowEnd = calendar.date(byAdding: .day, value: 2, to: windowStart) ?? windowStart
+        guard let dataStart = heights.map(\.time).min(),
+              let dataEnd = heights.map(\.time).max() else {
+            return false
+        }
+
+        return dataStart <= windowStart && dataEnd >= windowEnd
     }
 }
 
@@ -84,10 +117,25 @@ struct TideSnapshot: Sendable, Equatable {
     let extremes: [TideExtreme]
     let heights: [TideHeight]
     let fetchedAt: Date
+    let referenceDate: Date
+
+    init(
+        station: TideStation,
+        extremes: [TideExtreme],
+        heights: [TideHeight],
+        fetchedAt: Date,
+        referenceDate: Date? = nil
+    ) {
+        self.station = station
+        self.extremes = extremes
+        self.heights = heights
+        self.fetchedAt = fetchedAt
+        self.referenceDate = referenceDate ?? fetchedAt
+    }
 
     var currentState: TideCurrentState {
         TideDataTransformer.currentState(
-            at: Date(),
+            at: referenceDate,
             heights: heights,
             extremes: extremes
         )
