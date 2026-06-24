@@ -85,6 +85,11 @@ targets:
     sources:
       - path: EbbFlowWatch
       - path: Shared
+    entitlements:
+      path: EbbFlowWatch/EbbFlowWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.ebbflow.shared
     dependencies:
       - target: EbbFlowWatchWidgets
         embed: true
@@ -100,6 +105,11 @@ targets:
     sources:
       - path: EbbFlowWatchWidgets
       - path: Shared
+    entitlements:
+      path: EbbFlowWatchWidgets/EbbFlowWatchWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.ebbflow.shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.watch.widgets

@@ -35,17 +35,17 @@ enum TideExporter {
         return lines.joined(separator: "\n")
     }
 
-    static func pdfData(
+    static func pdfTextLines(
         rows: [TideTableRow],
         stationName: String,
         columns: Set<TideTableColumn> = Set(TideTableColumn.allCases)
-    ) -> Data {
+    ) -> [String] {
         let visible = TideTableBuilder.visibleColumns(columns)
-        var text = "Ebb & Flow — \(stationName)\n\n"
-        text += visible.map(\.header).joined(separator: " | ")
-        text += "\n"
-        text += String(repeating: "-", count: 40)
-        text += "\n"
+        var lines: [String] = []
+        lines.append("Ebb & Flow — \(stationName)")
+        lines.append("")
+        lines.append(visible.map(\.header).joined(separator: " | "))
+        lines.append(String(repeating: "-", count: 40))
 
         for row in rows {
             var fields: [String] = []
@@ -59,24 +59,43 @@ enum TideExporter {
                     fields.append(row.kind?.label ?? "")
                 }
             }
-            text += fields.joined(separator: " | ")
-            text += "\n"
+            lines.append(fields.joined(separator: " | "))
         }
+        return lines
+    }
 
-        var data = Data()
-        data.append("%PDF-1.4\n".data(using: .utf8)!)
-        data.append("1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n".data(using: .utf8)!)
-        data.append("2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n".data(using: .utf8)!)
-        let escaped = text
-            .replacingOccurrences(of: "\\", with: "\\\\")
-            .replacingOccurrences(of: "(", with: "\\(")
-            .replacingOccurrences(of: ")", with: "\\)")
-        let stream = "BT /F1 10 Tf 50 750 Td (\(escaped)) Tj ET"
-        data.append("3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj\n".data(using: .utf8)!)
-        data.append("4 0 obj << /Length \(stream.utf8.count) >> stream\n\(stream)\nendstream endobj\n".data(using: .utf8)!)
-        data.append("5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n".data(using: .utf8)!)
-        data.append("xref\n0 6\n0000000000 65535 f \ntrailer << /Size 6 /Root 1 0 R >>\nstartxref\n0\n%%EOF\n".data(using: .utf8)!)
-        return data
+    static func pdfTextPages(
+        rows: [TideTableRow],
+        stationName: String,
+        columns: Set<TideTableColumn> = Set(TideTableColumn.allCases),
+        maxLinesPerPage: Int = 40
+    ) -> [String] {
+        let lines = pdfTextLines(rows: rows, stationName: stationName, columns: columns)
+        guard !lines.isEmpty else { return [""] }
+
+        var pages: [String] = []
+        var index = 0
+        while index < lines.count {
+            let end = min(index + maxLinesPerPage, lines.count)
+            pages.append(lines[index..<end].joined(separator: "\n"))
+            index = end
+        }
+        return pages
+    }
+
+    static func pdfData(
+        rows: [TideTableRow],
+        stationName: String,
+        columns: Set<TideTableColumn> = Set(TideTableColumn.allCases),
+        maxLinesPerPage: Int = 40
+    ) -> Data {
+        let pages = pdfTextPages(
+            rows: rows,
+            stationName: stationName,
+            columns: columns,
+            maxLinesPerPage: maxLinesPerPage
+        )
+        return buildPDF(from: pages)
     }
 
     static func writeCSVFile(csv: String, stationID: String) throws -> URL {
@@ -85,5 +104,85 @@ enum TideExporter {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
         try csv.write(to: url, atomically: true, encoding: .utf8)
         return url
+    }
+
+    static func writePDFFile(
+        rows: [TideTableRow],
+        stationName: String,
+        stationID: String,
+        columns: Set<TideTableColumn> = Set(TideTableColumn.allCases),
+        maxLinesPerPage: Int = 40
+    ) throws -> URL {
+        let pdf = pdfData(
+            rows: rows,
+            stationName: stationName,
+            columns: columns,
+            maxLinesPerPage: maxLinesPerPage
+        )
+        let sanitizedID = stationID.replacingOccurrences(of: ",", with: "_")
+        let filename = "ebb-flow-\(sanitizedID)-tides.pdf"
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+        try pdf.write(to: url)
+        return url
+    }
+
+    private static func buildPDF(from pages: [String]) -> Data {
+        var objects: [String] = []
+        objects.append("1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n")
+
+        let pageObjectIDs = (0..<pages.count).map { 3 + ($0 * 2) }
+        let kids = pageObjectIDs.map { "\($0) 0 R" }.joined(separator: " ")
+        objects.append("2 0 obj << /Type /Pages /Kids [\(kids)] /Count \(pages.count) >> endobj\n")
+
+        var contentObjectID = 4
+        for (index, pageText) in pages.enumerated() {
+            let pageObjectID = pageObjectIDs[index]
+            let stream = pdfContentStream(for: pageText)
+            objects.append("\(pageObjectID) 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents \(contentObjectID) 0 R /Resources << /Font << /F1 \(3 + pages.count * 2) 0 R >> >> >> endobj\n")
+            objects.append("\(contentObjectID) 0 obj << /Length \(stream.utf8.count) >> stream\n\(stream)\nendstream endobj\n")
+            contentObjectID += 2
+        }
+
+        let fontObjectID = 3 + pages.count * 2
+        objects.append("\(fontObjectID) 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n")
+
+        var data = Data()
+        data.append("%PDF-1.4\n".data(using: .utf8)!)
+
+        var offsets: [Int] = [0]
+        for object in objects {
+            offsets.append(data.count)
+            data.append(object.data(using: .utf8)!)
+        }
+
+        let xrefOffset = data.count
+        let objectCount = objects.count + 1
+        var xref = "xref\n0 \(objectCount)\n0000000000 65535 f \n"
+        for offset in offsets.dropFirst() {
+            xref += String(format: "%010d 00000 n \n", offset)
+        }
+        data.append(xref.data(using: .utf8)!)
+        data.append("trailer << /Size \(objectCount) /Root 1 0 R >>\nstartxref\n\(xrefOffset)\n%%EOF\n".data(using: .utf8)!)
+        return data
+    }
+
+    private static func pdfContentStream(for pageText: String) -> String {
+        let lines = pageText.split(separator: "\n", omittingEmptySubsequences: false)
+        var commands = ["BT", "/F1 10 Tf", "50 750 Td"]
+        for (index, line) in lines.enumerated() {
+            if index > 0 {
+                commands.append("0 -12 Td")
+            }
+            commands.append("(\(pdfEscaped(String(line)))) Tj")
+        }
+        commands.append("ET")
+        return commands.joined(separator: "\n")
+    }
+
+    private static func pdfEscaped(_ text: String) -> String {
+        text
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "(", with: "\\(")
+            .replacingOccurrences(of: ")", with: "\\)")
     }
 }

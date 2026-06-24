@@ -275,6 +275,33 @@ struct Phase3Phase4Tests {
         #expect(entry.height == 0)
     }
 
+    @Test func watchTimelineReadsSharedStoreAfterWrite() {
+        let defaults = UserDefaults(suiteName: "EbbFlowTests.WatchAmbient")!
+        defaults.removePersistentDomain(forName: "EbbFlowTests.WatchAmbient")
+        defer { defaults.removePersistentDomain(forName: "EbbFlowTests.WatchAmbient") }
+
+        let payload = SharedTideSnapshotPayload(
+            stationID: "9410840",
+            stationName: "Marina del Rey",
+            currentHeight: 2.8,
+            isRising: true,
+            nextExtremeTime: Date().addingTimeInterval(900),
+            nextExtremeKind: "H",
+            nextExtremeHeight: 5.1,
+            fetchedAt: Date(timeIntervalSince1970: 1_700_000_100)
+        )
+
+        SharedTideDataStore.write(payload: payload, userDefaults: defaults)
+        let read = SharedTideDataStore.read(userDefaults: defaults)
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let entry = WatchTimelineBuilder.entry(from: read, now: now)
+
+        #expect(read == payload)
+        #expect(entry.stationName == "Marina del Rey")
+        #expect(entry.height == 2.8)
+        #expect(entry.stationName != "Ebb & Flow")
+    }
+
     @Test func watchComplicationTimelineMatchesProviderLogic() {
         let payload = SharedTideSnapshotPayload(
             stationID: "9410840",

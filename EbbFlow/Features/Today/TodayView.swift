@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TodayView: View {
     @Bindable var appModel: AppModel
+    @State private var exportItem: TideExportItem?
 
     var body: some View {
         ScrollView {
@@ -17,6 +18,9 @@ struct TodayView: View {
         .background(skyBackground.ignoresSafeArea())
         .navigationTitle("Today")
         .toolbar { toolbarContent }
+        .sheet(item: $exportItem) { item in
+            TideExportShareSheet(url: item.url)
+        }
         .scrollEdgeEffectStyle(.hard, for: .top)
     }
 
@@ -29,7 +33,10 @@ struct TodayView: View {
             .accessibilityLabel(appModel.isFavorite ? "Remove favorite" : "Add favorite")
         }
         ToolbarItem(placement: .topBarTrailing) {
-            ShareLink(item: appModel.exportCSV, preview: SharePreview("Tide CSV")) {
+            Menu {
+                Button("Export CSV") { presentCSVExport() }
+                Button("Export PDF") { presentPDFExport() }
+            } label: {
                 Image(systemName: "square.and.arrow.up")
             }
             .accessibilityLabel("Export tide data")
@@ -130,5 +137,31 @@ struct TodayView: View {
         formatter.dateStyle = .none
         formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+
+    private func presentCSVExport() {
+        do {
+            let url = try TideExporter.writeCSVFile(
+                csv: appModel.exportCSV,
+                stationID: appModel.selectedStation.id
+            )
+            exportItem = TideExportItem(url: url)
+        } catch {
+            appModel.errorMessage = error.localizedDescription
+        }
+    }
+
+    private func presentPDFExport() {
+        do {
+            let url = try TideExporter.writePDFFile(
+                rows: appModel.tableRows,
+                stationName: appModel.selectedStation.name,
+                stationID: appModel.selectedStation.id,
+                columns: appModel.tableColumns
+            )
+            exportItem = TideExportItem(url: url)
+        } catch {
+            appModel.errorMessage = error.localizedDescription
+        }
     }
 }

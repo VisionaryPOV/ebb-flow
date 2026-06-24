@@ -127,4 +127,53 @@ struct Phase2Tests {
         let header = String(data: pdf.prefix(8), encoding: .utf8) ?? ""
         #expect(header.hasPrefix("%PDF"))
     }
+
+    @Test func pdfExportEmbedsAllRowTimestamps() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)
+        let rows = TideTableBuilder.rows(from: extremes)
+        let pdf = TideExporter.pdfData(rows: rows, stationName: "Marina del Rey")
+        let pdfText = String(data: pdf, encoding: .utf8) ?? ""
+
+        for row in rows {
+            let timestamp = TideExporter.pdfTextLines(rows: [row], stationName: "Marina del Rey")[4]
+            #expect(pdfText.contains(timestamp))
+        }
+        #expect(pdfText.contains("Marina del Rey"))
+    }
+
+    @Test func pdfTextPagesSplitsLongTables() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)
+        let rows = TideTableBuilder.rows(from: extremes)
+        let pages = TideExporter.pdfTextPages(
+            rows: rows,
+            stationName: "Marina del Rey",
+            maxLinesPerPage: 3
+        )
+
+        #expect(pages.count > 1)
+        let combined = pages.joined(separator: "\n")
+        for row in rows {
+            let timestamp = TideExporter.pdfTextLines(rows: [row], stationName: "Marina del Rey")[4]
+            #expect(combined.contains(timestamp))
+        }
+    }
+
+    @Test func pdfExportWritesTemporaryFile() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)
+        let rows = TideTableBuilder.rows(from: extremes)
+        let url = try TideExporter.writePDFFile(
+            rows: rows,
+            stationName: "Marina del Rey",
+            stationID: "9410840"
+        )
+
+        #expect(FileManager.default.fileExists(atPath: url.path))
+        #expect(url.pathExtension == "pdf")
+        let written = try Data(contentsOf: url)
+        let header = String(data: written.prefix(8), encoding: .utf8) ?? ""
+        #expect(header.hasPrefix("%PDF"))
+    }
 }

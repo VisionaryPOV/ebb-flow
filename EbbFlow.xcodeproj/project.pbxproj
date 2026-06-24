@@ -189,6 +189,7 @@
 		59AB3F4BC79050FB6D79C0AA /* TideExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideExporter.swift; sourceTree = "<group>"; };
 		59D23A269C7CB40A0EDA951A /* WatchTimelineBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTimelineBuilder.swift; sourceTree = "<group>"; };
 		5FCBD8710A36008252B973D2 /* EbbFlow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EbbFlow.entitlements; sourceTree = "<group>"; };
+		60E4E045FEA268E30C093FCB /* EbbFlowWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EbbFlowWatch.entitlements; sourceTree = "<group>"; };
 		6707BA4574CC53921ED2A834 /* NOAAResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NOAAResponses.swift; sourceTree = "<group>"; };
 		6D6D21D2CAF20C4D497BF44D /* TideDateRangeCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideDateRangeCalculator.swift; sourceTree = "<group>"; };
 		7175CCBDFCEAD645B41D27B3 /* TideKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideKind.swift; sourceTree = "<group>"; };
@@ -239,6 +240,7 @@
 		F413D46832E26A49FF26C832 /* TestDateHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDateHolder.swift; sourceTree = "<group>"; };
 		F4EB55ED0885B0557A088998 /* CatalogTideFallbackProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogTideFallbackProvider.swift; sourceTree = "<group>"; };
 		F627B5F86EADEFE86791C177 /* CancellingOnceFixtureFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellingOnceFixtureFetcher.swift; sourceTree = "<group>"; };
+		F6D6A554F56E3D337D1A93C9 /* EbbFlowWatchWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EbbFlowWatchWidgets.entitlements; sourceTree = "<group>"; };
 		FF616A3CB5FCA9C706E75A99 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -285,6 +287,7 @@
 		22CE9A2629961A7F149D0F6E /* EbbFlowWatch */ = {
 			isa = PBXGroup;
 			children = (
+				60E4E045FEA268E30C093FCB /* EbbFlowWatch.entitlements */,
 				72678C5D62A4454DC582923C /* EbbFlowWatch.swift */,
 			);
 			path = EbbFlowWatch;
@@ -458,6 +461,7 @@
 		B32DC5A9655EEA25D16E6FC6 /* EbbFlowWatchWidgets */ = {
 			isa = PBXGroup;
 			children = (
+				F6D6A554F56E3D337D1A93C9 /* EbbFlowWatchWidgets.entitlements */,
 				C3A9B7410A1E9C2EE5DD595E /* EbbFlowWatchWidgets.swift */,
 			);
 			path = EbbFlowWatchWidgets;
@@ -993,6 +997,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = EbbFlowWatch/EbbFlowWatch.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebbflow.app.watch;
 				SDKROOT = watchos;
@@ -1005,6 +1010,7 @@
 		592F8BD1993CEC1F2F4DDB56 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = EbbFlowWatchWidgets/EbbFlowWatchWidgets.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Ebb & Flow Complications";
 				INFOPLIST_KEY_NSExtension = "{NSExtensionPointIdentifier: com.apple.widgetkit-extension}";
@@ -1077,6 +1083,7 @@
 		D6C0F04BC84D24F24BB0D5D7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = EbbFlowWatchWidgets/EbbFlowWatchWidgets.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Ebb & Flow Complications";
 				INFOPLIST_KEY_NSExtension = "{NSExtensionPointIdentifier: com.apple.widgetkit-extension}";
@@ -1185,6 +1192,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = EbbFlowWatch/EbbFlowWatch.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebbflow.app.watch;
 				SDKROOT = watchos;
