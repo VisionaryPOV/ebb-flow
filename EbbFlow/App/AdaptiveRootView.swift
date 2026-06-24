@@ -16,17 +16,11 @@ struct AdaptiveRootView: View {
 private struct iPadSplitView: View {
     @Bindable var appModel: AppModel
     @State private var spots: [FavoriteSpot] = []
+    @State private var selectedStationID: String?
 
     var body: some View {
         NavigationSplitView {
-            List(selection: Binding(
-                get: { appModel.selectedStation.id },
-                set: { id in
-                    if let spot = spots.first(where: { $0.stationID == id }) {
-                        Task { await appModel.load(station: spot.station) }
-                    }
-                }
-            )) {
+            List(selection: $selectedStationID) {
                 Section("Current") {
                     NavigationLink(value: appModel.selectedStation.id) {
                         Text(appModel.selectedStation.name)
@@ -39,15 +33,26 @@ private struct iPadSplitView: View {
                 }
             }
             .navigationTitle("Stations")
-            .task { spots = (try? appModel.spotsStore.allSpots()) ?? [] }
+            .task {
+                spots = (try? appModel.spotsStore.allSpots()) ?? []
+                selectedStationID = appModel.selectedStation.id
+            }
+            .onChange(of: appModel.selectedStation.id) { _, newID in
+                selectedStationID = newID
+            }
+            .onChange(of: selectedStationID) { _, newID in
+                guard let newID, newID != appModel.selectedStation.id else { return }
+                if let spot = spots.first(where: { $0.stationID == newID }) {
+                    Task { await appModel.load(station: spot.station) }
+                } else if let station = TideStationCatalog.resolve(id: newID) {
+                    Task { await appModel.load(station: station) }
+                }
+            }
         } detail: {
             NavigationStack {
                 TodayView(appModel: appModel)
             }
         }
-        #if os(iOS)
-        .keyboardShortcut("1", modifiers: .command)
-        #endif
     }
 }
 

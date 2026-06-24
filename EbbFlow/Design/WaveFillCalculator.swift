@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 struct TideChartPoint: Sendable, Equatable, Identifiable {
     let id: UUID
@@ -86,5 +87,41 @@ enum WaveFillCalculator {
         return filtered.map {
             fillLevel(currentHeight: $0.height, minHeight: minHeight, maxHeight: maxHeight)
         }
+    }
+}
+
+struct WaveLevelsVector: VectorArithmetic {
+    var values: [Double]
+
+    static var zero: WaveLevelsVector { WaveLevelsVector(values: []) }
+
+    static func + (lhs: WaveLevelsVector, rhs: WaveLevelsVector) -> WaveLevelsVector {
+        let count = max(lhs.values.count, rhs.values.count)
+        var result = [Double](repeating: 0, count: count)
+        for index in 0..<count {
+            let left = index < lhs.values.count ? lhs.values[index] : 0
+            let right = index < rhs.values.count ? rhs.values[index] : 0
+            result[index] = left + right
+        }
+        return WaveLevelsVector(values: result)
+    }
+
+    static func - (lhs: WaveLevelsVector, rhs: WaveLevelsVector) -> WaveLevelsVector {
+        let count = max(lhs.values.count, rhs.values.count)
+        var result = [Double](repeating: 0, count: count)
+        for index in 0..<count {
+            let left = index < lhs.values.count ? lhs.values[index] : 0
+            let right = index < rhs.values.count ? rhs.values[index] : 0
+            result[index] = left - right
+        }
+        return WaveLevelsVector(values: result)
+    }
+
+    mutating func scale(by rhs: Double) {
+        values = values.map { $0 * rhs }
+    }
+
+    var magnitudeSquared: Double {
+        values.reduce(0) { $0 + $1 * $1 }
     }
 }

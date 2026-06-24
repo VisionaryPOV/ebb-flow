@@ -107,3 +107,9 @@ schemes:
       config: Debug
       targets:
         - EbbFlowTests
+  EbbFlowWatch:
+    build:
+      targets:
+        EbbFlowWatch: all
+    run:
+      config: Debug

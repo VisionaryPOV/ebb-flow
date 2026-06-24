@@ -24,3 +24,21 @@ enum SharedTideDataStore {
         return payload
     }
 }
+
+struct WatchTideEntryData: Sendable, Equatable {
+    let date: Date
+    let height: Double
+    let stationName: String
+    let refreshDate: Date
+}
+
+enum WatchTimelineBuilder {
+    static func entry(from payload: SharedTideSnapshotPayload?, now: Date = Date()) -> WatchTideEntryData {
+        WatchTideEntryData(
+            date: now,
+            height: payload?.currentHeight ?? 0,
+            stationName: payload?.stationName ?? "Ebb & Flow",
+            refreshDate: now.addingTimeInterval(900)
+        )
+    }
+}

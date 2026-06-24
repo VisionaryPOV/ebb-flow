@@ -53,6 +53,33 @@ struct Phase2Tests {
         #expect(levels.allSatisfy { (0...1).contains($0) })
     }
 
+    @Test func monthlyWaveLevelsSpanMonthRange() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
+        let anchor = Self.calendar.date(from: DateComponents(year: 2025, month: 6, day: 24, hour: 12))!
+        let range = TideDateRangeCalculator.monthRange(containing: anchor, calendar: Self.calendar)
+        let levels = WaveFillCalculator.weeklyWaveLevels(for: heights, in: range)
+        let filtered = TideDateRangeCalculator.filterHeights(heights, in: range)
+
+        #expect(!levels.isEmpty)
+        #expect(levels.count == filtered.count)
+        #expect(filtered.first!.time >= range.lowerBound)
+        #expect(filtered.last!.time <= range.upperBound)
+    }
+
+    @Test func waveLevelsVectorSupportsVectorArithmetic() {
+        let a = WaveLevelsVector(values: [0.0, 0.5, 1.0])
+        let b = WaveLevelsVector(values: [1.0, 0.0, 0.5])
+
+        #expect((a + b).values == [1.0, 0.5, 1.5])
+        #expect((b - a).values == [1.0, -0.5, -0.5])
+
+        var scaled = a
+        scaled.scale(by: 2)
+        #expect(scaled.values == [0.0, 1.0, 2.0])
+        #expect(a.magnitudeSquared == 1.25)
+    }
+
     @Test func csvExportContainsStationAndRows() throws {
         let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
         let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)

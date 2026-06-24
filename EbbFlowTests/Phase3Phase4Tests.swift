@@ -60,6 +60,56 @@ struct Phase3Phase4Tests {
         #expect(result == false)
     }
 
+    @Test func routerFallsBackToWorldTidesOnNOAAFailure() async throws {
+        let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let fallback = RecordingTideFetcher(response: heightsData)
+        let router = CompositeTideProviderRouter(
+            noaa: FailingTideFetcher(),
+            worldTides: fallback
+        )
+
+        let from = Date()
+        let to = from.addingTimeInterval(86_400)
+        let data = try await router.fetchHeights(
+            stationID: "9410840",
+            from: from,
+            to: to,
+            intervalMinutes: 15
+        )
+
+        #expect(!data.isEmpty)
+        let received = await fallback.receivedStationIDs
+        #expect(received == ["33.9767,-118.4567"])
+    }
+
+    @Test func watchTimelineBuilderProducesEntry() {
+        let payload = SharedTideSnapshotPayload(
+            stationID: "9410840",
+            stationName: "Marina del Rey",
+            currentHeight: 2.8,
+            isRising: true,
+            nextExtremeTime: nil,
+            nextExtremeKind: nil,
+            nextExtremeHeight: nil,
+            fetchedAt: Date()
+        )
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let entry = WatchTimelineBuilder.entry(from: payload, now: now)
+
+        #expect(entry.stationName == "Marina del Rey")
+        #expect(entry.height == 2.8)
+        #expect(entry.date == now)
+        #expect(entry.refreshDate == now.addingTimeInterval(900))
+    }
+
+    @Test func watchTimelineBuilderDefaultsWithoutPayload() {
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let entry = WatchTimelineBuilder.entry(from: nil, now: now)
+
+        #expect(entry.stationName == "Ebb & Flow")
+        #expect(entry.height == 0)
+    }
+
     @Test @MainActor func storeKitFeatureLabelsExist() {
         for feature in ProFeature.allCases {
             #expect(!StoreKitManager.featureLabel(feature).isEmpty)

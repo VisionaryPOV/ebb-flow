@@ -115,10 +115,13 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
 }
 
 struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
-    private let noaa: NOAADataGetterClient
-    private let worldTides: WorldTidesProvider
+    private let noaa: any TidePredictionFetching
+    private let worldTides: any TidePredictionFetching
 
-    init(noaa: NOAADataGetterClient = NOAADataGetterClient(), worldTides: WorldTidesProvider = WorldTidesProvider()) {
+    init(
+        noaa: any TidePredictionFetching = NOAADataGetterClient(),
+        worldTides: any TidePredictionFetching = WorldTidesProvider()
+    ) {
         self.noaa = noaa
         self.worldTides = worldTides
     }
@@ -127,13 +130,68 @@ struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
         if stationID.contains(",") {
             return try await worldTides.fetchExtremes(stationID: stationID, from: from, to: to)
         }
-        return try await noaa.fetchExtremes(stationID: stationID, from: from, to: to)
+        do {
+            return try await noaa.fetchExtremes(stationID: stationID, from: from, to: to)
+        } catch {
+            return try await fetchWorldTidesFallback(
+                stationID: stationID,
+                from: from,
+                to: to,
+                intervalMinutes: nil,
+                includeExtremes: true,
+                originalError: error
+            )
+        }
     }
 
     func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
         if stationID.contains(",") {
-            return try await worldTides.fetchHeights(stationID: stationID, from: from, to: to, intervalMinutes: intervalMinutes)
+            return try await worldTides.fetchHeights(
+                stationID: stationID,
+                from: from,
+                to: to,
+                intervalMinutes: intervalMinutes
+            )
         }
-        return try await noaa.fetchHeights(stationID: stationID, from: from, to: to, intervalMinutes: intervalMinutes)
+        do {
+            return try await noaa.fetchHeights(
+                stationID: stationID,
+                from: from,
+                to: to,
+                intervalMinutes: intervalMinutes
+            )
+        } catch {
+            return try await fetchWorldTidesFallback(
+                stationID: stationID,
+                from: from,
+                to: to,
+                intervalMinutes: intervalMinutes,
+                includeExtremes: false,
+                originalError: error
+            )
+        }
+    }
+
+    private func fetchWorldTidesFallback(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int?,
+        includeExtremes: Bool,
+        originalError: Error
+    ) async throws -> Data {
+        guard let station = TideStationCatalog.resolve(id: stationID) else {
+            throw originalError
+        }
+        let coordinateKey = TideStationCatalog.coordinateKey(for: station)
+        if includeExtremes {
+            return try await worldTides.fetchExtremes(stationID: coordinateKey, from: from, to: to)
+        }
+        return try await worldTides.fetchHeights(
+            stationID: coordinateKey,
+            from: from,
+            to: to,
+            intervalMinutes: intervalMinutes ?? 15
+        )
     }
 }

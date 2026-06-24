@@ -13,22 +13,22 @@ struct WatchTideProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (WatchTideEntry) -> Void) {
-        let payload = SharedTideDataStore.read()
+        let built = WatchTimelineBuilder.entry(from: SharedTideDataStore.read())
         completion(WatchTideEntry(
-            date: Date(),
-            height: payload?.currentHeight ?? 0,
-            stationName: payload?.stationName ?? "Ebb & Flow"
+            date: built.date,
+            height: built.height,
+            stationName: built.stationName
         ))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<WatchTideEntry>) -> Void) {
-        let payload = SharedTideDataStore.read()
+        let built = WatchTimelineBuilder.entry(from: SharedTideDataStore.read())
         let entry = WatchTideEntry(
-            date: Date(),
-            height: payload?.currentHeight ?? 0,
-            stationName: payload?.stationName ?? "Ebb & Flow"
+            date: built.date,
+            height: built.height,
+            stationName: built.stationName
         )
-        completion(Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(900))))
+        completion(Timeline(entries: [entry], policy: .after(built.refreshDate)))
     }
 }
 

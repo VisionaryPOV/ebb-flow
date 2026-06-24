@@ -5,11 +5,15 @@ struct TideCurveChart: View {
     let points: [TideChartPoint]
     @Binding var selectedDate: Date
     let fillLevel: Double
-    var showsWeeklyWave: Bool = false
+    var chartScale: ChartTimeScale = .day
+
+    private var showsMultiDayWave: Bool {
+        chartScale == .week || chartScale == .month
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            if showsWeeklyWave {
+            if showsMultiDayWave {
                 WeeklyWaveFillShape(levels: points.map(\.normalizedY))
                     .fill(
                         LinearGradient(
@@ -21,7 +25,7 @@ struct TideCurveChart: View {
                             endPoint: .top
                         )
                     )
-                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: points.count)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: points.map(\.normalizedY))
             } else {
                 WaveFillShape(level: fillLevel)
                     .fill(
@@ -69,9 +73,9 @@ struct TideCurveChart: View {
                 }
             }
             .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: showsWeeklyWave ? 7 : 4)) { _ in
+                AxisMarks(values: .automatic(desiredCount: axisDesiredCount)) { _ in
                     AxisGridLine()
-                    AxisValueLabel(format: showsWeeklyWave ? .dateTime.weekday(.abbreviated) : .dateTime.hour())
+                    AxisValueLabel(format: axisLabelFormat)
                 }
             }
             .chartYAxis {
@@ -99,8 +103,27 @@ struct TideCurveChart: View {
                 }
             }
         }
-        .frame(height: showsWeeklyWave ? 280 : 260)
+        .frame(height: showsMultiDayWave ? 280 : 260)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    private var axisDesiredCount: Int {
+        switch chartScale {
+        case .day: 4
+        case .week: 7
+        case .month: 10
+        }
+    }
+
+    private var axisLabelFormat: Date.FormatStyle {
+        switch chartScale {
+        case .day:
+            .dateTime.hour()
+        case .week:
+            .dateTime.weekday(.abbreviated)
+        case .month:
+            .dateTime.day()
+        }
     }
 
     private var selectedPoint: TideChartPoint? {
@@ -142,9 +165,9 @@ private struct WaveFillShape: Shape {
 private struct WeeklyWaveFillShape: Shape {
     var levels: [Double]
 
-    var animatableData: AnimatablePair<Double, Double> {
-        get { AnimatablePair(levels.first ?? 0, levels.last ?? 0) }
-        set { }
+    var animatableData: WaveLevelsVector {
+        get { WaveLevelsVector(values: levels) }
+        set { levels = newValue.values }
     }
 
     func path(in rect: CGRect) -> Path {

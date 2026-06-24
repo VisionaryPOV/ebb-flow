@@ -18,9 +18,6 @@ struct TodayView: View {
         .navigationTitle("Today")
         .toolbar { toolbarContent }
         .scrollEdgeEffectStyle(.hard, for: .top)
-        #if os(iOS)
-        .keyboardShortcut("r", modifiers: .command)
-        #endif
     }
 
     @ToolbarContentBuilder
@@ -88,7 +85,7 @@ struct TodayView: View {
                 points: points,
                 selectedDate: $appModel.selectedChartDate,
                 fillLevel: fill,
-                showsWeeklyWave: appModel.chartScale == .week
+                chartScale: appModel.chartScale
             )
             .ebbFlowAccessibilityLabel(AccessibilityLabels.tideHeight(appModel.currentState.height))
         } else if let error = appModel.errorMessage {

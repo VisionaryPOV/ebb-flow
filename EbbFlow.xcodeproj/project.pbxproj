@@ -63,8 +63,10 @@
 		D9F7279C9BAA61EACC8206C0 /* TideTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56789A2F710A29D0EE1E2923 /* TideTableView.swift */; };
 		DB0D2B574812F6124E955484 /* SwiftDataTideCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36759E0F8E240E0C6450E17C /* SwiftDataTideCacheTests.swift */; };
 		DE4C570F84FE0A166ED02D48 /* Phase3Phase4Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D2FD3B4741D79E38451C2 /* Phase3Phase4Tests.swift */; };
+		DFF9858D500F0399427BFAEB /* FailingTideFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E77A5B0D0A8834540CB65A /* FailingTideFetcher.swift */; };
 		E88263FF3B87916260667F85 /* SkyGradientEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246E14EF8618AA4CCE64B020 /* SkyGradientEngine.swift */; };
 		E8D06DA386AEAE2E1567993C /* FixtureTideFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */; };
+		EE110F36FF9F6726825D3CD0 /* TideStationCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62E161C183B342E0838FC26 /* TideStationCatalog.swift */; };
 		F15DE3547350F72762766FCC /* TideCurveChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A201BABDF146CC0A631C162 /* TideCurveChart.swift */; };
 		FC4C24AB5AAF9EB2190A3507 /* TideLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938CF7B2F4ED56FFD7A78628 /* TideLiveActivity.swift */; };
 /* End PBXBuildFile section */
@@ -134,6 +136,7 @@
 		B4960B05F1B4DCA1B25FB90A /* Phase2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phase2Tests.swift; sourceTree = "<group>"; };
 		B81E2B3647E1BF2CA031262F /* TideIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideIntents.swift; sourceTree = "<group>"; };
 		B8459B0ABFA20BA9279F36DD /* PhotoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStorage.swift; sourceTree = "<group>"; };
+		C3E77A5B0D0A8834540CB65A /* FailingTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailingTideFetcher.swift; sourceTree = "<group>"; };
 		C58C48B4D57B0A5D05473814 /* FavoriteSpot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSpot.swift; sourceTree = "<group>"; };
 		CA858A9DAAAB863306BE8E27 /* EbbFlow.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = EbbFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D505ED0A051ADB6D6F9EF3F2 /* TideExtreme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideExtreme.swift; sourceTree = "<group>"; };
@@ -141,6 +144,7 @@
 		DE7F1FC21EDBCFF4B216CE0A /* WaveFillCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveFillCalculator.swift; sourceTree = "<group>"; };
 		E1E99D61DB9E40EDF76D74B2 /* marina_del_rey_hilo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = marina_del_rey_hilo.json; sourceTree = "<group>"; };
 		E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowApp.swift; sourceTree = "<group>"; };
+		E62E161C183B342E0838FC26 /* TideStationCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideStationCatalog.swift; sourceTree = "<group>"; };
 		E76760ADE921646C23F4B665 /* WorldTidesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTidesProvider.swift; sourceTree = "<group>"; };
 		F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureTideFetcher.swift; sourceTree = "<group>"; };
 		F413D46832E26A49FF26C832 /* TestDateHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDateHolder.swift; sourceTree = "<group>"; };
@@ -182,6 +186,7 @@
 				6D6D21D2CAF20C4D497BF44D /* TideDateRangeCalculator.swift */,
 				59AB3F4BC79050FB6D79C0AA /* TideExporter.swift */,
 				47E006FE088685BDCFE8A86E /* TideInterpolator.swift */,
+				E62E161C183B342E0838FC26 /* TideStationCatalog.swift */,
 				0C52916742D4C91C65A2827F /* TideTableBuilder.swift */,
 			);
 			path = Services;
@@ -307,6 +312,7 @@
 			isa = PBXGroup;
 			children = (
 				F627B5F86EADEFE86791C177 /* CancellingOnceFixtureFetcher.swift */,
+				C3E77A5B0D0A8834540CB65A /* FailingTideFetcher.swift */,
 				DA39C6A35DD08B3FC413C301 /* FixtureLoader.swift */,
 				F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */,
 				11210C467DB056CDEE63B538 /* InMemoryTideCache.swift */,
@@ -542,6 +548,7 @@
 			files = (
 				2AEF7D437435FEAF3C184141 /* AppModelLoadTests.swift in Sources */,
 				49B442BD872D4661A9A85740 /* CancellingOnceFixtureFetcher.swift in Sources */,
+				DFF9858D500F0399427BFAEB /* FailingTideFetcher.swift in Sources */,
 				A8FBB5D60E62237A7D4E3C4B /* FixtureLoader.swift in Sources */,
 				E8D06DA386AEAE2E1567993C /* FixtureTideFetcher.swift in Sources */,
 				34A726BF36299A84B17A558F /* InMemoryTideCache.swift in Sources */,
@@ -595,6 +602,7 @@
 				FC4C24AB5AAF9EB2190A3507 /* TideLiveActivity.swift in Sources */,
 				674B6F1F26D51FB2F2B821D1 /* TideNowPlayingBar.swift in Sources */,
 				07CA61ECEB4416F76F3AE225 /* TideStation.swift in Sources */,
+				EE110F36FF9F6726825D3CD0 /* TideStationCatalog.swift in Sources */,
 				79629D8B0B768D332AEEC93D /* TideStatusHUD.swift in Sources */,
 				1291E7C4988D11B0ECC52E97 /* TideTableBuilder.swift in Sources */,
 				D9F7279C9BAA61EACC8206C0 /* TideTableView.swift in Sources */,
