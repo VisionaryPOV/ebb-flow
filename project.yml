@@ -1,0 +1,76 @@
+name: EbbFlow
+options:
+  bundleIdPrefix: com.ebbflow
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    DEVELOPMENT_TEAM: ""
+targets:
+  EbbFlow:
+    type: application
+    platform: iOS
+    sources:
+      - path: EbbFlow
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app
+        PRODUCT_NAME: EbbFlow
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: "Ebb & Flow"
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Ebb & Flow uses your location to find the nearest tide station."
+        TARGETED_DEVICE_FAMILY: "1,2"
+        IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+        ENABLE_PREVIEWS: YES
+    scheme:
+      testTargets:
+        - EbbFlowTests
+  EbbFlowTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: EbbFlowTests
+        excludes:
+          - "**/.DS_Store"
+    resources:
+      - path: EbbFlowTests/Fixtures
+        buildPhase: resources
+    dependencies:
+      - target: EbbFlow
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+        IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+schemes:
+  EbbFlow:
+    build:
+      targets:
+        EbbFlow: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - EbbFlowTests
+  EbbFlowTests:
+    build:
+      targets:
+        EbbFlow: all
+        EbbFlowTests: [test]
+    test:
+      config: Debug
+      targets:
+        - EbbFlowTests
