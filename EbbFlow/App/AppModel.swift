@@ -14,9 +14,12 @@ final class AppModel {
     var isLoading = false
     var errorMessage: String?
     var selectedChartDate = Date()
+    var chartScale: ChartTimeScale = .day
+    var tableColumns: Set<TideTableColumn> = Set(TideTableColumn.allCases)
 
     private let tideService: CompositeTideService
     let spotsStore: SpotsStore
+    let journalStore: JournalStore
 
     init(
         modelContext: ModelContext,
@@ -27,10 +30,11 @@ final class AppModel {
             self.tideService = tideService
         } else {
             let cache = SwiftDataTideCache(modelContext: modelContext)
-            let client = NOAADataGetterClient()
+            let client = CompositeTideProviderRouter()
             self.tideService = CompositeTideService(client: client, cache: cache)
         }
         self.spotsStore = SpotsStore(modelContext: modelContext)
+        self.journalStore = JournalStore(modelContext: modelContext)
         self.selectedStation = selectedStation
     }
 
@@ -45,10 +49,14 @@ final class AppModel {
         defer { isLoading = false }
 
         do {
-            let loaded = try await tideService.loadTideData(for: station)
+            let loaded = try await tideService.loadTideData(
+                for: station,
+                days: chartScale.loadDays
+            )
             snapshot = loaded
+            SharedTideDataStore.write(loaded)
             Self.logger.info(
-                "Loaded default station \(station.id, privacy: .public) \(station.name, privacy: .public) extremes=\(loaded.extremes.count, privacy: .public) heights=\(loaded.heights.count, privacy: .public) fetchedAt=\(loaded.fetchedAt.timeIntervalSince1970, privacy: .public)"
+                "Loaded station \(station.id, privacy: .public) scale=\(self.chartScale.rawValue, privacy: .public) extremes=\(loaded.extremes.count, privacy: .public) heights=\(loaded.heights.count, privacy: .public)"
             )
             NSLog(
                 "EbbFlow TideLoad: Loaded station %@ (%@) extremes=%ld heights=%ld coversToday=%@",
@@ -60,19 +68,56 @@ final class AppModel {
             )
         } catch {
             if attempt < Self.maxLoadAttempts, Self.isTransientCancellation(error) {
-                NSLog(
-                    "EbbFlow TideLoad: Retrying station %@ after cancellation (attempt %ld)",
-                    station.id,
-                    attempt + 1
-                )
                 try? await Task.sleep(nanoseconds: 250_000_000)
                 await load(station: station, attempt: attempt + 1)
                 return
             }
             errorMessage = error.localizedDescription
-            Self.logger.error("Failed to load station \(station.id, privacy: .public): \(error.localizedDescription, privacy: .public)")
             NSLog("EbbFlow TideLoad: Failed station %@ error=%@", station.id, error.localizedDescription)
         }
+    }
+
+    func setChartScale(_ scale: ChartTimeScale) async {
+        chartScale = scale
+        await load(station: selectedStation)
+    }
+
+    var chartRange: ClosedRange<Date> {
+        TideDateRangeCalculator.range(for: chartScale, containing: selectedChartDate)
+    }
+
+    var filteredHeights: [TideHeight] {
+        guard let snapshot else { return [] }
+        return TideDateRangeCalculator.filterHeights(snapshot.heights, in: chartRange)
+    }
+
+    var filteredExtremes: [TideExtreme] {
+        guard let snapshot else { return [] }
+        return TideDateRangeCalculator.filterExtremes(snapshot.extremes, in: chartRange)
+    }
+
+    var tableRows: [TideTableRow] {
+        TideTableBuilder.rows(from: filteredExtremes, columns: tableColumns)
+    }
+
+    var exportCSV: String {
+        TideExporter.csv(rows: tableRows, stationName: selectedStation.name, columns: tableColumns)
+    }
+
+    var exportPDF: Data {
+        TideExporter.pdfData(rows: tableRows, stationName: selectedStation.name, columns: tableColumns)
+    }
+
+    var lunarContext: (MoonPhase, SolarTimes, [TideEnergyWindow])? {
+        guard let snapshot else { return nil }
+        let phase = LunarSolarEngine.moonPhase(for: selectedChartDate)
+        let solar = LunarSolarEngine.solarTimes(
+            for: selectedChartDate,
+            latitude: selectedStation.latitude,
+            longitude: selectedStation.longitude
+        )
+        let windows = LunarSolarEngine.tideEnergyWindows(extremes: snapshot.extremes, solar: solar)
+        return (phase, solar, windows)
     }
 
     static func isTransientCancellation(_ error: Error) -> Bool {
@@ -90,6 +135,22 @@ final class AppModel {
             } else {
                 try spotsStore.addSpot(for: selectedStation)
             }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func logJournalEntry(notes: String, photoPath: String = "") {
+        guard let snapshot else { return }
+        let state = snapshot.currentState
+        do {
+            try journalStore.addEntry(
+                station: selectedStation,
+                tideHeightFeet: state.height,
+                tideKind: state.nextExtreme?.kind,
+                notes: notes,
+                photoPath: photoPath
+            )
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -16,17 +16,50 @@ final class SpotsStore {
         return try modelContext.fetch(descriptor)
     }
 
-    func addSpot(for station: TideStation, notes: String = "") throws {
+    func spot(stationID: String) throws -> FavoriteSpot? {
         let descriptor = FetchDescriptor<FavoriteSpot>(
-            predicate: #Predicate { $0.stationID == station.id }
+            predicate: #Predicate { $0.stationID == stationID }
         )
-        if let existing = try modelContext.fetch(descriptor).first {
+        return try modelContext.fetch(descriptor).first
+    }
+
+    func addSpot(
+        for station: TideStation,
+        notes: String = "",
+        photoPath: String = "",
+        personalOffsetFeet: Double = 0
+    ) throws {
+        if let existing = try spot(stationID: station.id) {
             existing.notes = notes
+            existing.photoPath = photoPath
+            existing.personalOffsetFeet = personalOffsetFeet
             try modelContext.save()
             return
         }
 
-        modelContext.insert(FavoriteSpot(station: station, notes: notes))
+        modelContext.insert(
+            FavoriteSpot(
+                station: station,
+                notes: notes,
+                photoPath: photoPath,
+                personalOffsetFeet: personalOffsetFeet
+            )
+        )
+        try modelContext.save()
+    }
+
+    func updateSpot(
+        stationID: String,
+        notes: String?,
+        photoPath: String?,
+        personalOffsetFeet: Double?
+    ) throws {
+        guard let existing = try spot(stationID: stationID) else {
+            throw TideServiceError.cacheMiss
+        }
+        if let notes { existing.notes = notes }
+        if let photoPath { existing.photoPath = photoPath }
+        if let personalOffsetFeet { existing.personalOffsetFeet = personalOffsetFeet }
         try modelContext.save()
     }
 
@@ -41,9 +74,6 @@ final class SpotsStore {
     }
 
     func contains(stationID: String) throws -> Bool {
-        let descriptor = FetchDescriptor<FavoriteSpot>(
-            predicate: #Predicate { $0.stationID == stationID }
-        )
-        return try !modelContext.fetch(descriptor).isEmpty
+        try spot(stationID: stationID) != nil
     }
 }

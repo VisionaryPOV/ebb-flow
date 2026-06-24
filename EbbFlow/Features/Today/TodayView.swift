@@ -7,30 +7,42 @@ struct TodayView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 header
+                chartScalePicker
                 chartSection
-                extremesTable
+                lunarSection
+                TideTableView(appModel: appModel)
             }
             .padding()
         }
         .background(skyBackground.ignoresSafeArea())
         .navigationTitle("Today")
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    appModel.toggleFavorite()
-                } label: {
-                    Image(systemName: appModel.isFavorite ? "star.fill" : "star")
-                }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    Task { await appModel.loadDefaultStation() }
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                }
-            }
-        }
+        .toolbar { toolbarContent }
         .scrollEdgeEffectStyle(.hard, for: .top)
+        #if os(iOS)
+        .keyboardShortcut("r", modifiers: .command)
+        #endif
+    }
+
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button { appModel.toggleFavorite() } label: {
+                Image(systemName: appModel.isFavorite ? "star.fill" : "star")
+            }
+            .accessibilityLabel(appModel.isFavorite ? "Remove favorite" : "Add favorite")
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            ShareLink(item: appModel.exportCSV, preview: SharePreview("Tide CSV")) {
+                Image(systemName: "square.and.arrow.up")
+            }
+            .accessibilityLabel("Export tide data")
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button { Task { await appModel.loadDefaultStation() } } label: {
+                Image(systemName: "arrow.clockwise")
+            }
+            .accessibilityLabel("Refresh tides")
+        }
     }
 
     private var header: some View {
@@ -45,22 +57,40 @@ struct TodayView: View {
         }
     }
 
+    private var chartScalePicker: some View {
+        Picker("Range", selection: Binding(
+            get: { appModel.chartScale },
+            set: { newScale in Task { await appModel.setChartScale(newScale) } }
+        )) {
+            ForEach(ChartTimeScale.allCases) { scale in
+                Text(scale.label).tag(scale)
+            }
+        }
+        .pickerStyle(.segmented)
+    }
+
     @ViewBuilder
     private var chartSection: some View {
         if appModel.isLoading {
             ProgressView("Reading the water…")
                 .frame(maxWidth: .infinity, minHeight: 260)
-        } else if let snapshot = appModel.snapshot {
-            let points = TideCurvePointGenerator.chartPoints(from: snapshot.heights)
+        } else if !appModel.filteredHeights.isEmpty {
+            let points = TideCurvePointGenerator.chartPoints(
+                from: appModel.filteredHeights,
+                in: appModel.chartRange
+            )
             let fill = WaveFillCalculator.fillLevel(
-                for: snapshot.heights,
-                at: appModel.selectedChartDate
+                for: appModel.snapshot?.heights ?? [],
+                at: appModel.selectedChartDate,
+                in: appModel.chartRange
             )
             TideCurveChart(
                 points: points,
                 selectedDate: $appModel.selectedChartDate,
-                fillLevel: fill
+                fillLevel: fill,
+                showsWeeklyWave: appModel.chartScale == .week
             )
+            .ebbFlowAccessibilityLabel(AccessibilityLabels.tideHeight(appModel.currentState.height))
         } else if let error = appModel.errorMessage {
             Text(error)
                 .foregroundStyle(.white)
@@ -68,28 +98,24 @@ struct TodayView: View {
         }
     }
 
-    private var extremesTable: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Highs & Lows")
-                .font(.headline)
-                .foregroundStyle(.white)
-
-            if let extremes = appModel.snapshot?.extremes {
-                ForEach(extremes) { extreme in
-                    HStack {
-                        Label(extreme.kind.label, systemImage: extreme.kind == .high ? "arrow.up" : "arrow.down")
-                        Spacer()
-                        Text(formattedTime(extreme.time))
-                        Text(String(format: "%.1f ft", extreme.height))
-                            .monospacedDigit()
-                    }
-                    .font(.subheadline)
+    @ViewBuilder
+    private var lunarSection: some View {
+        if let (phase, solar, windows) = appModel.lunarContext {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Sky & Energy")
+                    .font(.headline)
                     .foregroundStyle(.white)
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 12)
-                    .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                Text("\(phase.label) · Sunrise \(formattedTime(solar.sunrise)) · Sunset \(formattedTime(solar.sunset))")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.85))
+                if let top = windows.first {
+                    Text("\(top.label) · score \(String(format: "%.0f%%", top.score * 100))")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.75))
                 }
             }
+            .padding(12)
+            .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
         }
     }
 

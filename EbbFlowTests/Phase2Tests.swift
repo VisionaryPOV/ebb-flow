@@ -1,0 +1,75 @@
+import Foundation
+import Testing
+@testable import EbbFlow
+
+struct Phase2Tests {
+    private static let pacific = TimeZone(identifier: "America/Los_Angeles")!
+
+    private static var calendar: Calendar {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = pacific
+        return cal
+    }
+
+    @Test func dateRangeWeekFiltersHeights() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
+        let anchor = Self.calendar.date(from: DateComponents(year: 2025, month: 6, day: 24, hour: 12))!
+        let range = TideDateRangeCalculator.weekRange(containing: anchor, calendar: Self.calendar)
+        let filtered = TideDateRangeCalculator.filterHeights(heights, in: range)
+
+        #expect(!filtered.isEmpty)
+        #expect(filtered.first!.time >= range.lowerBound)
+        #expect(filtered.last!.time <= range.upperBound)
+    }
+
+    @Test func dateRangeMonthSpans30Days() throws {
+        let anchor = Self.calendar.date(from: DateComponents(year: 2025, month: 6, day: 24))!
+        let range = TideDateRangeCalculator.monthRange(containing: anchor, calendar: Self.calendar)
+        let days = Self.calendar.dateComponents([.day], from: range.lowerBound, to: range.upperBound).day ?? 0
+        #expect(days == 30)
+    }
+
+    @Test func chartPointsNormalizeWithinRange() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
+        let anchor = Self.calendar.date(from: DateComponents(year: 2025, month: 6, day: 24, hour: 12))!
+        let range = TideDateRangeCalculator.weekRange(containing: anchor, calendar: Self.calendar)
+        let points = TideCurvePointGenerator.chartPoints(from: heights, in: range)
+
+        #expect(!points.isEmpty)
+        #expect(points.map(\.normalizedY).min() == 0)
+        #expect(points.map(\.normalizedY).max() == 1)
+    }
+
+    @Test func weeklyWaveLevelsMatchPointCount() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_heights")
+        let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
+        let anchor = Self.calendar.date(from: DateComponents(year: 2025, month: 6, day: 24, hour: 12))!
+        let range = TideDateRangeCalculator.weekRange(containing: anchor, calendar: Self.calendar)
+        let levels = WaveFillCalculator.weeklyWaveLevels(for: heights, in: range)
+        let filtered = TideDateRangeCalculator.filterHeights(heights, in: range)
+        #expect(levels.count == filtered.count)
+        #expect(levels.allSatisfy { (0...1).contains($0) })
+    }
+
+    @Test func csvExportContainsStationAndRows() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)
+        let rows = TideTableBuilder.rows(from: extremes)
+        let csv = TideExporter.csv(rows: rows, stationName: "Marina del Rey")
+
+        #expect(csv.contains("Marina del Rey"))
+        #expect(csv.contains("High"))
+        #expect(csv.contains("0.82"))
+    }
+
+    @Test func pdfExportProducesPDFHeader() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)
+        let rows = TideTableBuilder.rows(from: extremes)
+        let pdf = TideExporter.pdfData(rows: rows, stationName: "Marina del Rey")
+        let header = String(data: pdf.prefix(8), encoding: .utf8) ?? ""
+        #expect(header.hasPrefix("%PDF"))
+    }
+}

@@ -68,4 +68,23 @@ enum WaveFillCalculator {
             maxHeight: maxHeight
         )
     }
+
+    static func fillLevel(
+        for heights: [TideHeight],
+        at date: Date,
+        in range: ClosedRange<Date>
+    ) -> Double {
+        let filtered = TideDateRangeCalculator.filterHeights(heights, in: range)
+        return fillLevel(for: filtered, at: date)
+    }
+
+    static func weeklyWaveLevels(for heights: [TideHeight], in range: ClosedRange<Date>) -> [Double] {
+        let filtered = TideDateRangeCalculator.filterHeights(heights, in: range)
+        guard !filtered.isEmpty else { return [] }
+        let minHeight = filtered.map(\.height).min() ?? 0
+        let maxHeight = filtered.map(\.height).max() ?? 1
+        return filtered.map {
+            fillLevel(currentHeight: $0.height, minHeight: minHeight, maxHeight: maxHeight)
+        }
+    }
 }

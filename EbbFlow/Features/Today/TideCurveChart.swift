@@ -5,21 +5,37 @@ struct TideCurveChart: View {
     let points: [TideChartPoint]
     @Binding var selectedDate: Date
     let fillLevel: Double
+    var showsWeeklyWave: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            WaveFillShape(level: fillLevel)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            EbbFlowTheme.deepTeal.opacity(0.55),
-                            EbbFlowTheme.deepTeal.opacity(0.15)
-                        ],
-                        startPoint: .bottom,
-                        endPoint: .top
+            if showsWeeklyWave {
+                WeeklyWaveFillShape(levels: points.map(\.normalizedY))
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                EbbFlowTheme.deepTeal.opacity(0.55),
+                                EbbFlowTheme.deepTeal.opacity(0.10)
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .top
+                        )
                     )
-                )
-                .animation(.spring(response: 0.5, dampingFraction: 0.75), value: fillLevel)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: points.count)
+            } else {
+                WaveFillShape(level: fillLevel)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                EbbFlowTheme.deepTeal.opacity(0.55),
+                                EbbFlowTheme.deepTeal.opacity(0.15)
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .top
+                        )
+                    )
+                    .animation(.spring(response: 0.5, dampingFraction: 0.75), value: fillLevel)
+            }
 
             Chart(points) { point in
                 LineMark(
@@ -53,9 +69,9 @@ struct TideCurveChart: View {
                 }
             }
             .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 4)) { value in
+                AxisMarks(values: .automatic(desiredCount: showsWeeklyWave ? 7 : 4)) { _ in
                     AxisGridLine()
-                    AxisValueLabel(format: .dateTime.hour())
+                    AxisValueLabel(format: showsWeeklyWave ? .dateTime.weekday(.abbreviated) : .dateTime.hour())
                 }
             }
             .chartYAxis {
@@ -83,7 +99,7 @@ struct TideCurveChart: View {
                 }
             }
         }
-        .frame(height: 260)
+        .frame(height: showsWeeklyWave ? 280 : 260)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 
@@ -119,6 +135,30 @@ private struct WaveFillShape: Shape {
         var path = Path()
         let fillHeight = rect.height * CGFloat(level)
         path.addRect(CGRect(x: 0, y: rect.height - fillHeight, width: rect.width, height: fillHeight))
+        return path
+    }
+}
+
+private struct WeeklyWaveFillShape: Shape {
+    var levels: [Double]
+
+    var animatableData: AnimatablePair<Double, Double> {
+        get { AnimatablePair(levels.first ?? 0, levels.last ?? 0) }
+        set { }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        guard !levels.isEmpty else { return Path() }
+        var path = Path()
+        let stepX = rect.width / CGFloat(max(levels.count - 1, 1))
+        path.move(to: CGPoint(x: 0, y: rect.height))
+        for (index, level) in levels.enumerated() {
+            let x = CGFloat(index) * stepX
+            let y = rect.height - CGFloat(level) * rect.height
+            path.addLine(to: CGPoint(x: x, y: y))
+        }
+        path.addLine(to: CGPoint(x: rect.width, y: rect.height))
+        path.closeSubpath()
         return path
     }
 }

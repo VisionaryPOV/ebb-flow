@@ -34,8 +34,13 @@ actor CompositeTideService {
         self.now = now
     }
 
-    func loadTideData(for station: TideStation, forceRefresh: Bool = false) async throws -> TideSnapshot {
+    func loadTideData(
+        for station: TideStation,
+        days: Int = 2,
+        forceRefresh: Bool = false
+    ) async throws -> TideSnapshot {
         let referenceDate = now()
+        let loadDays = max(days, 2)
 
         if !forceRefresh,
            let cachedExtremes = await cache.cachedExtremes(stationID: station.id),
@@ -46,7 +51,8 @@ actor CompositeTideService {
            isCacheValid(
                heights: cachedHeights,
                fetchedAt: fetchedAt,
-               referenceDate: referenceDate
+               referenceDate: referenceDate,
+               requiredDays: loadDays
            ) {
             return TideSnapshot(
                 station: station,
@@ -58,7 +64,7 @@ actor CompositeTideService {
         }
 
         let start = calendar.startOfDay(for: referenceDate)
-        let end = calendar.date(byAdding: .day, value: 2, to: start) ?? start
+        let end = calendar.date(byAdding: .day, value: loadDays, to: start) ?? start
 
         let extremesData = try await client.fetchExtremes(
             stationID: station.id,
@@ -95,14 +101,15 @@ actor CompositeTideService {
     func isCacheValid(
         heights: [TideHeight],
         fetchedAt: Date,
-        referenceDate: Date
+        referenceDate: Date,
+        requiredDays: Int = 2
     ) -> Bool {
         guard referenceDate.timeIntervalSince(fetchedAt) < Self.cacheTTL else {
             return false
         }
 
         let windowStart = calendar.startOfDay(for: referenceDate)
-        let windowEnd = calendar.date(byAdding: .day, value: 2, to: windowStart) ?? windowStart
+        let windowEnd = calendar.date(byAdding: .day, value: requiredDays, to: windowStart) ?? windowStart
         guard let dataStart = heights.map(\.time).min(),
               let dataEnd = heights.map(\.time).max() else {
             return false

@@ -35,6 +35,20 @@
                ReferencedContainer = "container:EbbFlow.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "092138AD2C2AAD12A82114E8"
+               BuildableName = "EbbFlowWidgets.appex"
+               BlueprintName = "EbbFlowWidgets"
+               ReferencedContainer = "container:EbbFlow.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

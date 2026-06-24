@@ -9,15 +9,24 @@ final class FavoriteSpot {
     var longitude: Double
     var datum: String
     var notes: String
+    var photoPath: String
+    var personalOffsetFeet: Double
     var createdAt: Date
 
-    init(station: TideStation, notes: String = "") {
+    init(
+        station: TideStation,
+        notes: String = "",
+        photoPath: String = "",
+        personalOffsetFeet: Double = 0
+    ) {
         self.stationID = station.id
         self.name = station.name
         self.latitude = station.latitude
         self.longitude = station.longitude
         self.datum = station.datum
         self.notes = notes
+        self.photoPath = photoPath
+        self.personalOffsetFeet = personalOffsetFeet
         self.createdAt = Date()
     }
 
@@ -29,5 +38,9 @@ final class FavoriteSpot {
             longitude: longitude,
             datum: datum
         )
+    }
+
+    func adjustedHeight(_ height: Double) -> Double {
+        height + personalOffsetFeet
     }
 }
