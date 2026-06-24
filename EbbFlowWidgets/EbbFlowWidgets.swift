@@ -64,6 +64,9 @@ struct EbbFlowWidgets: WidgetBundle {
     var body: some Widget {
         EbbFlowTideWidget()
         EbbFlowLockScreenWidget()
+        #if canImport(ActivityKit)
+        TideLiveActivityWidget()
+        #endif
     }
 }
 

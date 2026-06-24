@@ -1,3 +1,4 @@
+import AppIntents
 import Foundation
 import SwiftData
 import Testing
@@ -56,6 +57,90 @@ struct Phase3Phase4Tests {
         let entry = TideLiveActivityBuilder.timelineEntry(from: payload)
         #expect(entry.stationName == "Marina del Rey")
         #expect(entry.isRising)
+    }
+
+    @Test func liveActivityContentBuildsCountdownLabel() {
+        let next = Date().addingTimeInterval(3600)
+        let payload = SharedTideSnapshotPayload(
+            stationID: "9410840",
+            stationName: "Marina del Rey",
+            currentHeight: 3.3,
+            isRising: true,
+            nextExtremeTime: next,
+            nextExtremeKind: "H",
+            nextExtremeHeight: 5.2,
+            fetchedAt: Date()
+        )
+        let content = TideLiveActivityBuilder.content(from: payload)
+        #expect(content.nextExtremeLabel.contains("High"))
+        #expect(content.nextExtremeLabel.contains("5.2"))
+        #expect(TideLiveActivityBuilder.hasActiveCountdown(for: content))
+    }
+
+    @Test func sharedTideDataStoreWriteReadRoundtrip() {
+        SharedTideDataStore.clear()
+        defer { SharedTideDataStore.clear() }
+
+        let payload = SharedTideSnapshotPayload(
+            stationID: "9410840",
+            stationName: "Marina del Rey",
+            currentHeight: 4.5,
+            isRising: true,
+            nextExtremeTime: Date().addingTimeInterval(1800),
+            nextExtremeKind: "H",
+            nextExtremeHeight: 5.0,
+            fetchedAt: Date(timeIntervalSince1970: 1_950_000_000)
+        )
+
+        SharedTideDataStore.write(payload: payload)
+        let read = SharedTideDataStore.read()
+
+        #expect(read == payload)
+    }
+
+    @Test func sharedTideDataStoreRoundtripWithInjectedDefaults() {
+        let defaults = UserDefaults(suiteName: "EbbFlowTests.SharedTideDataStore")!
+        defaults.removePersistentDomain(forName: "EbbFlowTests.SharedTideDataStore")
+        defer { defaults.removePersistentDomain(forName: "EbbFlowTests.SharedTideDataStore") }
+
+        let payload = SharedTideSnapshotPayload(
+            stationID: "9410840",
+            stationName: "Marina del Rey",
+            currentHeight: 2.1,
+            isRising: false,
+            nextExtremeTime: nil,
+            nextExtremeKind: nil,
+            nextExtremeHeight: nil,
+            fetchedAt: Date(timeIntervalSince1970: 1_950_000_001)
+        )
+
+        SharedTideDataStore.write(payload: payload, userDefaults: defaults)
+        let read = SharedTideDataStore.read(userDefaults: defaults)
+
+        #expect(read == payload)
+    }
+
+    @Test func getTideIntentReadsSharedStore() async throws {
+        SharedTideDataStore.clear()
+        defer { SharedTideDataStore.clear() }
+
+        let payload = SharedTideSnapshotPayload(
+            stationID: "9410840",
+            stationName: "Marina del Rey",
+            currentHeight: 4.5,
+            isRising: true,
+            nextExtremeTime: nil,
+            nextExtremeKind: nil,
+            nextExtremeHeight: nil,
+            fetchedAt: Date()
+        )
+        SharedTideDataStore.write(payload: payload)
+
+        let result = try await GetTideIntent().perform()
+        let value = try #require(result.value)
+        #expect(value.contains("Marina del Rey"))
+        #expect(value.contains("4.5"))
+        #expect(value.contains("rising"))
     }
 
     @Test func lunarSolarMoonPhaseAndEnergyWindows() throws {
