@@ -60,12 +60,26 @@ struct Phase3Phase4Tests {
         #expect(result == false)
     }
 
-    @Test func routerFallsBackToWorldTidesOnNOAAFailure() async throws {
-        let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
-        let fallback = RecordingTideFetcher(response: heightsData)
+    @Test func routerFallsBackThroughRealWorldTidesProvider() async throws {
+        MockWorldTidesURLSessionFactory.reset()
+        MockWorldTidesURLProtocol.responseData = Data("""
+        {
+          "status": 200,
+          "heights": [
+            {"dt": 1700000000, "height": 2.4},
+            {"dt": 1700003600, "height": 2.8}
+          ]
+        }
+        """.utf8)
+
+        let worldTides = WorldTidesProvider(
+            session: MockWorldTidesURLSessionFactory.make(),
+            apiKey: "integration-test-key"
+        )
         let router = CompositeTideProviderRouter(
             noaa: FailingTideFetcher(),
-            worldTides: fallback
+            worldTides: worldTides,
+            catalogFallback: FailingTideFetcher(error: .cacheMiss)
         )
 
         let from = Date()
@@ -77,9 +91,55 @@ struct Phase3Phase4Tests {
             intervalMinutes: 15
         )
 
-        #expect(!data.isEmpty)
-        let received = await fallback.receivedStationIDs
-        #expect(received == ["33.9767,-118.4567"])
+        let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
+        #expect(heights.count == 2)
+        #expect(MockWorldTidesURLProtocol.receivedURLs.count == 1)
+        #expect(MockWorldTidesURLProtocol.receivedURLs[0].absoluteString.contains("lat=33.9767"))
+        #expect(MockWorldTidesURLProtocol.receivedURLs[0].absoluteString.contains("lon=-118.4567"))
+    }
+
+    @Test func routerFallsBackToCatalogFixturesWithoutAPIKey() async throws {
+        let router = CompositeTideProviderRouter(
+            noaa: FailingTideFetcher(),
+            worldTides: WorldTidesProvider(apiKey: ""),
+            catalogFallback: CatalogTideFallbackProvider(loader: FixtureLoader.data(named:))
+        )
+
+        let from = Date()
+        let to = from.addingTimeInterval(86_400)
+        let data = try await router.fetchHeights(
+            stationID: "9410840",
+            from: from,
+            to: to,
+            intervalMinutes: 15
+        )
+
+        let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
+        #expect(!heights.isEmpty)
+    }
+
+    @Test func worldTidesProviderParsesMockResponse() async throws {
+        MockWorldTidesURLSessionFactory.reset()
+        MockWorldTidesURLProtocol.responseData = Data("""
+        {
+          "status": 200,
+          "heights": [{"dt": 1700000000, "height": 3.1}]
+        }
+        """.utf8)
+
+        let provider = WorldTidesProvider(
+            session: MockWorldTidesURLSessionFactory.make(),
+            apiKey: "test-key"
+        )
+        let data = try await provider.fetchHeights(
+            stationID: "33.9767,-118.4567",
+            from: Date(),
+            to: Date().addingTimeInterval(3600),
+            intervalMinutes: 15
+        )
+        let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
+        #expect(heights.count == 1)
+        #expect(heights[0].height == 3.1)
     }
 
     @Test func watchTimelineBuilderProducesEntry() {
@@ -108,6 +168,25 @@ struct Phase3Phase4Tests {
 
         #expect(entry.stationName == "Ebb & Flow")
         #expect(entry.height == 0)
+    }
+
+    @Test func watchComplicationTimelineMatchesProviderLogic() {
+        let payload = SharedTideSnapshotPayload(
+            stationID: "9410840",
+            stationName: "Marina del Rey",
+            currentHeight: 4.0,
+            isRising: false,
+            nextExtremeTime: nil,
+            nextExtremeKind: nil,
+            nextExtremeHeight: nil,
+            fetchedAt: Date()
+        )
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let timeline = WatchTimelineBuilder.complicationTimeline(from: payload, now: now)
+
+        #expect(timeline.entry.stationName == "Marina del Rey")
+        #expect(timeline.entry.height == 4.0)
+        #expect(timeline.refreshDate == now.addingTimeInterval(WatchTimelineBuilder.refreshInterval))
     }
 
     @Test @MainActor func storeKitFeatureLabelsExist() {

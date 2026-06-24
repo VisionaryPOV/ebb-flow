@@ -18,6 +18,10 @@ private struct iPadSplitView: View {
     @State private var spots: [FavoriteSpot] = []
     @State private var selectedStationID: String?
 
+    private var sidebarSpots: [FavoriteSpot] {
+        spots.filter { $0.stationID != appModel.selectedStation.id }
+    }
+
     var body: some View {
         NavigationSplitView {
             List(selection: $selectedStationID) {
@@ -26,19 +30,25 @@ private struct iPadSplitView: View {
                         Text(appModel.selectedStation.name)
                     }
                 }
-                Section("My Spots") {
-                    ForEach(spots, id: \.stationID) { spot in
-                        NavigationLink(value: spot.stationID) { Text(spot.name) }
+                if !sidebarSpots.isEmpty {
+                    Section("My Spots") {
+                        ForEach(sidebarSpots, id: \.stationID) { spot in
+                            NavigationLink(value: spot.stationID) { Text(spot.name) }
+                        }
                     }
                 }
             }
             .navigationTitle("Stations")
+            .refreshable { reloadSpots() }
             .task {
-                spots = (try? appModel.spotsStore.allSpots()) ?? []
+                reloadSpots()
                 selectedStationID = appModel.selectedStation.id
             }
             .onChange(of: appModel.selectedStation.id) { _, newID in
                 selectedStationID = newID
+            }
+            .onChange(of: appModel.spotsRevision) { _, _ in
+                reloadSpots()
             }
             .onChange(of: selectedStationID) { _, newID in
                 guard let newID, newID != appModel.selectedStation.id else { return }
@@ -53,6 +63,10 @@ private struct iPadSplitView: View {
                 TodayView(appModel: appModel)
             }
         }
+    }
+
+    private func reloadSpots() {
+        spots = (try? appModel.spotsStore.allSpots()) ?? []
     }
 }
 

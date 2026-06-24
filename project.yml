@@ -19,6 +19,10 @@ targets:
       - path: EbbFlow
         excludes:
           - "**/.DS_Store"
+      - path: Shared
+    resources:
+      - path: EbbFlow/Resources/Fixtures
+        buildPhase: resources
     entitlements:
       path: EbbFlow/EbbFlow.entitlements
     settings:
@@ -35,6 +39,7 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Ebb & Flow uses your location to find the nearest tide station."
         INFOPLIST_KEY_NSSupportsLiveActivities: YES
+        SUPPORTS_MACCATALYST: YES
         TARGETED_DEVICE_FAMILY: "1,2"
         IPHONEOS_DEPLOYMENT_TARGET: "26.0"
         ENABLE_PREVIEWS: YES
@@ -62,10 +67,26 @@ targets:
     platform: watchOS
     sources:
       - path: EbbFlowWatch
+      - path: Shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.watch
         GENERATE_INFOPLIST_FILE: YES
+        WATCHOS_DEPLOYMENT_TARGET: "26.0"
+        SKIP_INSTALL: YES
+  EbbFlowWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - path: EbbFlowWatchWidgets
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.watch.widgets
+        PRODUCT_NAME: EbbFlowWatchWidgets
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: "Ebb & Flow Complications"
+        INFOPLIST_KEY_NSExtension: "{NSExtensionPointIdentifier: com.apple.widgetkit-extension}"
         WATCHOS_DEPLOYMENT_TARGET: "26.0"
         SKIP_INSTALL: YES
   EbbFlowTests:
@@ -111,5 +132,12 @@ schemes:
     build:
       targets:
         EbbFlowWatch: all
+        EbbFlowWatchWidgets: all
+    run:
+      config: Debug
+  EbbFlowWatchWidgets:
+    build:
+      targets:
+        EbbFlowWatchWidgets: all
     run:
       config: Debug

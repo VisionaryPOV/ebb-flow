@@ -78,4 +78,12 @@ enum TideExporter {
         data.append("xref\n0 6\n0000000000 65535 f \ntrailer << /Size 6 /Root 1 0 R >>\nstartxref\n0\n%%EOF\n".data(using: .utf8)!)
         return data
     }
+
+    static func writeCSVFile(csv: String, stationID: String) throws -> URL {
+        let sanitizedID = stationID.replacingOccurrences(of: ",", with: "_")
+        let filename = "ebb-flow-\(sanitizedID)-tides.csv"
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+        try csv.write(to: url, atomically: true, encoding: .utf8)
+        return url
+    }
 }

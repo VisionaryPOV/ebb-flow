@@ -24,7 +24,7 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
 
     init(
         session: URLSession = .shared,
-        apiKey: String = "",
+        apiKey: String = WorldTidesConfiguration.apiKey,
         baseURL: URL = URL(string: "https://www.worldtides.info/api/v3")!
     ) {
         self.session = session
@@ -117,13 +117,16 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
 struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
     private let noaa: any TidePredictionFetching
     private let worldTides: any TidePredictionFetching
+    private let catalogFallback: any TidePredictionFetching
 
     init(
         noaa: any TidePredictionFetching = NOAADataGetterClient(),
-        worldTides: any TidePredictionFetching = WorldTidesProvider()
+        worldTides: any TidePredictionFetching = WorldTidesProvider(),
+        catalogFallback: any TidePredictionFetching = CatalogTideFallbackProvider()
     ) {
         self.noaa = noaa
         self.worldTides = worldTides
+        self.catalogFallback = catalogFallback
     }
 
     func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
@@ -183,15 +186,28 @@ struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
         guard let station = TideStationCatalog.resolve(id: stationID) else {
             throw originalError
         }
+
         let coordinateKey = TideStationCatalog.coordinateKey(for: station)
-        if includeExtremes {
-            return try await worldTides.fetchExtremes(stationID: coordinateKey, from: from, to: to)
+        do {
+            if includeExtremes {
+                return try await worldTides.fetchExtremes(stationID: coordinateKey, from: from, to: to)
+            }
+            return try await worldTides.fetchHeights(
+                stationID: coordinateKey,
+                from: from,
+                to: to,
+                intervalMinutes: intervalMinutes ?? 15
+            )
+        } catch {
+            if includeExtremes {
+                return try await catalogFallback.fetchExtremes(stationID: stationID, from: from, to: to)
+            }
+            return try await catalogFallback.fetchHeights(
+                stationID: stationID,
+                from: from,
+                to: to,
+                intervalMinutes: intervalMinutes ?? 15
+            )
         }
-        return try await worldTides.fetchHeights(
-            stationID: coordinateKey,
-            from: from,
-            to: to,
-            intervalMinutes: intervalMinutes ?? 15
-        )
     }
 }

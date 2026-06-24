@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 import Testing
 @testable import EbbFlow
 
@@ -67,6 +68,20 @@ struct Phase2Tests {
         #expect(filtered.last!.time <= range.upperBound)
     }
 
+    @Test @MainActor func iPadSidebarSpotsRevisionIncrementsOnFavoriteToggle() throws {
+        let schema = Schema([FavoriteSpot.self])
+        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [configuration])
+        let context = ModelContext(container)
+        let model = AppModel(modelContext: context)
+
+        #expect(model.spotsRevision == 0)
+        model.toggleFavorite()
+        #expect(model.spotsRevision == 1)
+        model.toggleFavorite()
+        #expect(model.spotsRevision == 2)
+    }
+
     @Test func waveLevelsVectorSupportsVectorArithmetic() {
         let a = WaveLevelsVector(values: [0.0, 0.5, 1.0])
         let b = WaveLevelsVector(values: [1.0, 0.0, 0.5])
@@ -89,6 +104,19 @@ struct Phase2Tests {
         #expect(csv.contains("Marina del Rey"))
         #expect(csv.contains("High"))
         #expect(csv.contains("0.82"))
+    }
+
+    @Test func csvExportWritesTemporaryFile() throws {
+        let data = try FixtureLoader.data(named: "marina_del_rey_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: Self.pacific)
+        let rows = TideTableBuilder.rows(from: extremes)
+        let csv = TideExporter.csv(rows: rows, stationName: "Marina del Rey")
+        let url = try TideExporter.writeCSVFile(csv: csv, stationID: "9410840")
+
+        #expect(FileManager.default.fileExists(atPath: url.path))
+        let written = try String(contentsOf: url, encoding: .utf8)
+        #expect(written == csv)
+        #expect(url.lastPathComponent.contains("9410840"))
     }
 
     @Test func pdfExportProducesPDFHeader() throws {

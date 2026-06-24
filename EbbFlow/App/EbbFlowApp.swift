@@ -24,7 +24,6 @@ struct EbbFlowApp: App {
             RootView()
         }
         .modelContainer(sharedModelContainer)
-        #if os(macOS)
         .commands {
             CommandMenu("Chart") {
                 Button("Today") {
@@ -55,6 +54,5 @@ struct EbbFlowApp: App {
                 .keyboardShortcut("e", modifiers: [.command, .shift])
             }
         }
-        #endif
     }
 }

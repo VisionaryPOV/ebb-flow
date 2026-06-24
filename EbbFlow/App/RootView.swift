@@ -18,6 +18,7 @@ struct RootView: View {
 private struct AppRootContent: View {
     @State private var appModel: AppModel
     @State private var initialLoadStarted = false
+    @State private var exportItem: TideExportItem?
 
     init(modelContext: ModelContext) {
         _appModel = State(wrappedValue: AppModel(modelContext: modelContext))
@@ -38,14 +39,28 @@ private struct AppRootContent: View {
                 Task { await appModel.setChartScale(scale) }
             }
             .onReceive(NotificationCenter.default.publisher(for: .ebbFlowExportCSV)) { _ in
-                _ = appModel.exportCSV
+                presentCSVExport()
+            }
+            .sheet(item: $exportItem) { item in
+                TideExportShareSheet(url: item.url)
             }
             .background(keyboardShortcutButtons)
     }
 
+    private func presentCSVExport() {
+        do {
+            let url = try TideExporter.writeCSVFile(
+                csv: appModel.exportCSV,
+                stationID: appModel.selectedStation.id
+            )
+            exportItem = TideExportItem(url: url)
+        } catch {
+            appModel.errorMessage = error.localizedDescription
+        }
+    }
+
     @ViewBuilder
     private var keyboardShortcutButtons: some View {
-        #if os(iOS)
         Group {
             Button("") { Task { await appModel.setChartScale(.day) } }
                 .keyboardShortcut("1", modifiers: .command)
@@ -55,12 +70,9 @@ private struct AppRootContent: View {
                 .keyboardShortcut("3", modifiers: .command)
             Button("") { Task { await appModel.loadDefaultStation() } }
                 .keyboardShortcut("r", modifiers: .command)
-            Button("") { _ = appModel.exportCSV }
+            Button("") { presentCSVExport() }
                 .keyboardShortcut("e", modifiers: [.command, .shift])
         }
         .hidden()
-        #else
-        EmptyView()
-        #endif
     }
 }

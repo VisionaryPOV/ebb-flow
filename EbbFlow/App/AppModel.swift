@@ -16,6 +16,7 @@ final class AppModel {
     var selectedChartDate = Date()
     var chartScale: ChartTimeScale = .day
     var tableColumns: Set<TideTableColumn> = Set(TideTableColumn.allCases)
+    private(set) var spotsRevision = 0
 
     private let tideService: CompositeTideService
     let spotsStore: SpotsStore
@@ -135,6 +136,7 @@ final class AppModel {
             } else {
                 try spotsStore.addSpot(for: selectedStation)
             }
+            spotsRevision += 1
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -1,26 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1430"
+   wasCreatedForAppExtension = "YES"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
       runPostActionsOnFailure = "NO">
       <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "23B09DF2A06C3087AA8B9261"
-               BuildableName = "EbbFlowWatch.app"
-               BlueprintName = "EbbFlowWatch"
-               ReferencedContainer = "container:EbbFlow.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
@@ -46,9 +33,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "23B09DF2A06C3087AA8B9261"
-            BuildableName = "EbbFlowWatch.app"
-            BlueprintName = "EbbFlowWatch"
+            BlueprintIdentifier = "C83FC285FF88D4FDDC6E6045"
+            BuildableName = "EbbFlowWatchWidgets.appex"
+            BlueprintName = "EbbFlowWatchWidgets"
             ReferencedContainer = "container:EbbFlow.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -57,21 +44,22 @@
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "23B09DF2A06C3087AA8B9261"
-            BuildableName = "EbbFlowWatch.app"
-            BlueprintName = "EbbFlowWatch"
+            BlueprintIdentifier = "C83FC285FF88D4FDDC6E6045"
+            BuildableName = "EbbFlowWatchWidgets.appex"
+            BlueprintName = "EbbFlowWatchWidgets"
             ReferencedContainer = "container:EbbFlow.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -88,9 +76,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "23B09DF2A06C3087AA8B9261"
-            BuildableName = "EbbFlowWatch.app"
-            BlueprintName = "EbbFlowWatch"
+            BlueprintIdentifier = "C83FC285FF88D4FDDC6E6045"
+            BuildableName = "EbbFlowWatchWidgets.appex"
+            BlueprintName = "EbbFlowWatchWidgets"
             ReferencedContainer = "container:EbbFlow.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
