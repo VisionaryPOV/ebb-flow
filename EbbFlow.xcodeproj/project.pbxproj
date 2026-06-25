@@ -21,6 +21,7 @@
 		186C89C4800A4C0850843F6E /* WatchTimelineBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D23A269C7CB40A0EDA951A /* WatchTimelineBuilder.swift */; };
 		193DDE54231A1BFD742ECB29 /* WorldTidesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76760ADE921646C23F4B665 /* WorldTidesProvider.swift */; };
 		1A1870355543E60E3007C91F /* marina_del_rey_heights.json in Resources */ = {isa = PBXBuildFile; fileRef = A3FC702461CC53ED43BC72A4 /* marina_del_rey_heights.json */; };
+		1AC2C96AA158508FBF7DFBCB /* TestIsolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBBAAAF3894B8DA64FB9BF6E /* TestIsolation.swift */; };
 		1CA6321EDD4033766DF5CA18 /* SkyGradientEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A25168C43C13EC411A7F3A /* SkyGradientEngineTests.swift */; };
 		1CF5F66B9FC33360B6329D0B /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0550738E3A7B482CECE97A /* AppModel.swift */; };
 		1E2B41EB2925EFC30A7DF007 /* JournalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76A6D2840C4BA806C184A3C3 /* JournalStore.swift */; };
@@ -33,6 +34,7 @@
 		2A632331B1D0BEB29794F8F9 /* marina_del_rey_heights.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C7E9555F1EE461F5DF1331B /* marina_del_rey_heights.json */; };
 		2AEF7D437435FEAF3C184141 /* AppModelLoadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFF2BD17A1EABCC8A001023 /* AppModelLoadTests.swift */; };
 		302831E2BA9D4E4B1639257B /* TideStationResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26F8190BBCD6189626C995D /* TideStationResolver.swift */; };
+		321F3CBCA4D1960D672B6F48 /* RootViewLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E00B28D85BB61A40E0A831 /* RootViewLaunchTests.swift */; };
 		326B89CECC4841F0F6CA4A1C /* TideLiveActivityBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD733603D9910CEA4F7FA9F8 /* TideLiveActivityBuilder.swift */; };
 		34A726BF36299A84B17A558F /* InMemoryTideCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11210C467DB056CDEE63B538 /* InMemoryTideCache.swift */; };
 		3817F8C782C22DD6FFFC34C5 /* TideLiveActivityBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD733603D9910CEA4F7FA9F8 /* TideLiveActivityBuilder.swift */; };
@@ -243,6 +245,7 @@
 		B81E2B3647E1BF2CA031262F /* TideIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideIntents.swift; sourceTree = "<group>"; };
 		B8459B0ABFA20BA9279F36DD /* PhotoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStorage.swift; sourceTree = "<group>"; };
 		B88E32129B1996AE5E72AB43 /* TideActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideActivityAttributes.swift; sourceTree = "<group>"; };
+		B9E00B28D85BB61A40E0A831 /* RootViewLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewLaunchTests.swift; sourceTree = "<group>"; };
 		BC6EAF04EB72B3E4A27B5FE1 /* EbbFlowTests.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EbbFlowTests.entitlements; sourceTree = "<group>"; };
 		C3A9B7410A1E9C2EE5DD595E /* EbbFlowWatchWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowWatchWidgets.swift; sourceTree = "<group>"; };
 		C3E77A5B0D0A8834540CB65A /* FailingTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailingTideFetcher.swift; sourceTree = "<group>"; };
@@ -261,6 +264,7 @@
 		E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowApp.swift; sourceTree = "<group>"; };
 		E62E161C183B342E0838FC26 /* TideStationCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideStationCatalog.swift; sourceTree = "<group>"; };
 		E76760ADE921646C23F4B665 /* WorldTidesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTidesProvider.swift; sourceTree = "<group>"; };
+		EBBAAAF3894B8DA64FB9BF6E /* TestIsolation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestIsolation.swift; sourceTree = "<group>"; };
 		EFB7C126F7FC3B6491FA3F3A /* NOAAStationRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NOAAStationRecord.swift; sourceTree = "<group>"; };
 		F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureTideFetcher.swift; sourceTree = "<group>"; };
 		F413D46832E26A49FF26C832 /* TestDateHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDateHolder.swift; sourceTree = "<group>"; };
@@ -475,6 +479,7 @@
 				11210C467DB056CDEE63B538 /* InMemoryTideCache.swift */,
 				C9A3C14D41583D8EE0DD7870 /* MockWorldTidesURLProtocol.swift */,
 				F413D46832E26A49FF26C832 /* TestDateHolder.swift */,
+				EBBAAAF3894B8DA64FB9BF6E /* TestIsolation.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -594,6 +599,7 @@
 				1E7D93223CDD05107927D299 /* NOAAClientTests.swift */,
 				B4960B05F1B4DCA1B25FB90A /* Phase2Tests.swift */,
 				924D2FD3B4741D79E38451C2 /* Phase3Phase4Tests.swift */,
+				B9E00B28D85BB61A40E0A831 /* RootViewLaunchTests.swift */,
 				46A25168C43C13EC411A7F3A /* SkyGradientEngineTests.swift */,
 				38DEC323044195095B422301 /* SpotsStoreTests.swift */,
 				AAA531D97E6B8EC86EDB7288 /* StationDiscoveryTests.swift */,
@@ -793,12 +799,14 @@
 				AD34CD4838E955A7EDC67078 /* NOAAClientTests.swift in Sources */,
 				50B3023C51223BF2908CF5C4 /* Phase2Tests.swift in Sources */,
 				DE4C570F84FE0A166ED02D48 /* Phase3Phase4Tests.swift in Sources */,
+				321F3CBCA4D1960D672B6F48 /* RootViewLaunchTests.swift in Sources */,
 				1CA6321EDD4033766DF5CA18 /* SkyGradientEngineTests.swift in Sources */,
 				66016398F88294A414D14FE1 /* SpotsStoreTests.swift in Sources */,
 				5D8E3C76704DFD082D97BE3C /* StationDiscoveryTests.swift in Sources */,
 				DB0D2B574812F6124E955484 /* SwiftDataTideCacheTests.swift in Sources */,
 				D0ECD6553E0073E8E58CE356 /* TargetWiringTests.swift in Sources */,
 				41325919946C61B8B52A5894 /* TestDateHolder.swift in Sources */,
+				1AC2C96AA158508FBF7DFBCB /* TestIsolation.swift in Sources */,
 				87DBC5E753F03A506093AA82 /* TideCurveTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

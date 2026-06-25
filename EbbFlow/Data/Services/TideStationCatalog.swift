@@ -10,6 +10,10 @@ enum TideStationCatalog {
         registry = Dictionary(uniqueKeysWithValues: records.map { ($0.id, $0) })
     }
 
+    static func clearRegistryForTesting() {
+        registry = [:]
+    }
+
     static func record(for id: String) -> NOAAStationRecord? {
         registry[id]
     }

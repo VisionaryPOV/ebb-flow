@@ -69,10 +69,8 @@ struct Phase2Tests {
     }
 
     @Test @MainActor func iPadSidebarSpotsRevisionIncrementsOnFavoriteToggle() throws {
-        let schema = Schema([FavoriteSpot.self])
-        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        let context = ModelContext(container)
+        TestIsolation.resetUserDefaultsAndCatalog()
+        let context = try TestIsolation.makeModelContext()
         let model = AppModel(modelContext: context)
 
         #expect(model.spotsRevision == 0)
@@ -80,6 +78,7 @@ struct Phase2Tests {
         #expect(model.spotsRevision == 1)
         model.toggleFavorite()
         #expect(model.spotsRevision == 2)
+        TestIsolation.resetUserDefaultsAndCatalog()
     }
 
     @Test func waveLevelsVectorSupportsVectorArithmetic() {

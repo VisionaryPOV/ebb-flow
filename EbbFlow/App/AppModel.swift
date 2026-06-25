@@ -34,7 +34,7 @@ final class AppModel {
 
     init(
         modelContext: ModelContext,
-        selectedStation: TideStation = .marinaDelRey,
+        selectedStation: TideStation? = nil,
         tideService: CompositeTideService? = nil,
         storeManager: StoreKitManager = StoreKitManager(),
         stationMetadata: (any NOAAStationFetching)? = nil,
@@ -52,18 +52,23 @@ final class AppModel {
         self.storeManager = storeManager
         self.stationMetadata = stationMetadata ?? NOAAStationMetadataClient()
         self.locationService = locationService ?? LocationService()
-        self.selectedStation = selectedStation
+        self.selectedStation = selectedStation ?? Self.stationFromPreferences()
+        seedDefaultFavoriteIfNeeded(notify: false)
+    }
+
+    static func stationFromPreferences() -> TideStation {
+        if let lastID = UserPreferencesStore.lastStationID(),
+           let station = TideStationCatalog.resolve(id: lastID) {
+            return station
+        }
+        return .marinaDelRey
     }
 
     func restoreLastStation() async {
-        seedDefaultFavoriteIfNeeded()
+        seedDefaultFavoriteIfNeeded(notify: true)
         _ = try? await stationMetadata.allStations()
 
-        if let lastID = UserPreferencesStore.lastStationID(),
-           let station = TideStationCatalog.resolve(id: lastID) {
-            selectedStation = station
-        }
-
+        selectedStation = Self.stationFromPreferences()
         await load(station: selectedStation)
     }
 
@@ -282,12 +287,12 @@ final class AppModel {
         }
     }
 
-    private func seedDefaultFavoriteIfNeeded() {
+    private func seedDefaultFavoriteIfNeeded(notify: Bool) {
         guard UserPreferencesStore.needsDefaultFavoriteSeed else { return }
         do {
             if try !spotsStore.contains(stationID: TideStation.marinaDelRey.id) {
                 try spotsStore.addSpot(for: .marinaDelRey)
-                notifySpotsChanged()
+                if notify { notifySpotsChanged() }
             }
             UserPreferencesStore.markDefaultFavoriteSeeded()
         } catch {

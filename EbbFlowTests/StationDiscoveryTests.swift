@@ -14,6 +14,7 @@ struct StationDiscoveryTests {
     }
 
     @Test func filterFindsMarinaAndMauiStations() throws {
+        TestIsolation.resetUserDefaultsAndCatalog()
         let stations = try sampleStations()
         let marina = NOAAStationDiscovery.filter(stations: stations, query: "Marina")
         #expect(marina.contains(where: { $0.id == "9410840" }))
@@ -96,19 +97,24 @@ struct StationDiscoveryTests {
     }
 
     @Test func userPreferencesRoundtrip() {
-        UserPreferencesStore.clearLastStationID()
+        TestIsolation.resetUserDefaultsAndCatalog()
         #expect(UserPreferencesStore.lastStationID() == nil)
+        #expect(UserPreferencesStore.needsDefaultFavoriteSeed)
         UserPreferencesStore.saveLastStationID("1615202")
         #expect(UserPreferencesStore.lastStationID() == "1615202")
-        UserPreferencesStore.clearLastStationID()
+        UserPreferencesStore.markDefaultFavoriteSeeded()
+        #expect(UserPreferencesStore.needsDefaultFavoriteSeed == false)
+        TestIsolation.resetUserDefaultsAndCatalog()
+        #expect(UserPreferencesStore.needsDefaultFavoriteSeed)
     }
 
     @MainActor
     @Test func restoreLastStationUsesPersistedID() async throws {
-        UserPreferencesStore.clearLastStationID()
+        TestIsolation.resetUserDefaultsAndCatalog()
+        let stations = try sampleStations()
+        TideStationCatalog.register(stations)
         UserPreferencesStore.saveLastStationID("1615202")
 
-        let stations = try sampleStations()
         let fetcher = FixtureNOAAStationFetcher(stations: stations)
         let extremesData = try FixtureLoader.data(named: "makena_hilo")
         let heightsData = try FixtureLoader.data(named: "makena_heights")
@@ -131,11 +137,13 @@ struct StationDiscoveryTests {
             stationMetadata: fetcher
         )
 
+        #expect(model.selectedStation.id == "1615202")
+
         await model.restoreLastStation()
 
         #expect(model.selectedStation.id == "1615202")
         #expect(model.snapshot != nil)
-        UserPreferencesStore.clearLastStationID()
+        TestIsolation.resetUserDefaultsAndCatalog()
     }
 
     @MainActor
@@ -156,7 +164,7 @@ struct StationDiscoveryTests {
 
     @MainActor
     @Test func selectNearestUsesMockLocation() async throws {
-        UserPreferencesStore.clearLastStationID()
+        TestIsolation.resetUserDefaultsAndCatalog()
         let stations = try sampleStations()
         let metadata = FixtureNOAAStationFetcher(stations: stations)
         let mckenna = CLLocationCoordinate2D(latitude: 20.653, longitude: -156.442)
@@ -188,19 +196,11 @@ struct StationDiscoveryTests {
 
         #expect(model.selectedStation.id == "1615202")
         #expect(model.snapshot != nil)
-        UserPreferencesStore.clearLastStationID()
+        TestIsolation.resetUserDefaultsAndCatalog()
     }
 
     @MainActor
     private func makeContext() throws -> ModelContext {
-        let schema = Schema([
-            FavoriteSpot.self,
-            CachedTideExtremeRecord.self,
-            CachedTideHeightRecord.self,
-            CachedTideMetadataRecord.self
-        ])
-        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        return ModelContext(container)
+        try TestIsolation.makeModelContext()
     }
 }
