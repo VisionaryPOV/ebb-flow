@@ -8,6 +8,7 @@ final class FavoriteSpot {
     var latitude: Double
     var longitude: Double
     var datum: String
+    var state: String = "CA"
     var notes: String
     var photoPath: String
     var personalOffsetFeet: Double
@@ -24,6 +25,7 @@ final class FavoriteSpot {
         self.latitude = station.latitude
         self.longitude = station.longitude
         self.datum = station.datum
+        self.state = station.state
         self.notes = notes
         self.photoPath = photoPath
         self.personalOffsetFeet = personalOffsetFeet
@@ -36,7 +38,8 @@ final class FavoriteSpot {
             name: name,
             latitude: latitude,
             longitude: longitude,
-            datum: datum
+            datum: datum,
+            state: state
         )
     }
 

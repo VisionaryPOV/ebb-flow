@@ -107,12 +107,16 @@ struct StationDiscoveryTests {
             name: "Makena",
             latitude: 20.6567,
             longitude: -156.445,
-            datum: "MLLW"
+            datum: "MLLW",
+            state: "HI"
         )
         UserPreferencesStore.saveLastStation(makena)
         let restored = UserPreferencesStore.lastStation()
         #expect(restored?.id == "1615202")
         #expect(restored?.name == "Makena")
+        #expect(restored?.state == "HI")
+        TideStationCatalog.clearRegistryForTesting()
+        #expect(TideStationCatalog.timeZone(for: restored!).identifier == Self.hawaii.identifier)
 
         UserPreferencesStore.markDefaultFavoriteSeeded()
         #expect(UserPreferencesStore.needsDefaultFavoriteSeed == false)
@@ -151,11 +155,29 @@ struct StationDiscoveryTests {
         )
 
         #expect(model.selectedStation.id == "1615202")
+        #expect(TideStationCatalog.timeZone(for: model.selectedStation).identifier == Self.hawaii.identifier)
 
         await model.restoreLastStation()
 
         #expect(model.selectedStation.id == "1615202")
         #expect(model.snapshot != nil)
+        let components = calendar.dateComponents([.hour], from: try #require(model.snapshot?.extremes.first?.time))
+        #expect(components.hour == 2)
+        TestIsolation.resetUserDefaultsAndCatalog()
+    }
+
+    @Test func timeZoneForHawaiiStationWithoutRegistry() {
+        TestIsolation.resetUserDefaultsAndCatalog()
+        TideStationCatalog.clearRegistryForTesting()
+        let makena = TideStation(
+            id: "1615202",
+            name: "Makena",
+            latitude: 20.6567,
+            longitude: -156.445,
+            datum: "MLLW",
+            state: "HI"
+        )
+        #expect(TideStationCatalog.timeZone(for: makena).identifier == Self.hawaii.identifier)
         TestIsolation.resetUserDefaultsAndCatalog()
     }
 

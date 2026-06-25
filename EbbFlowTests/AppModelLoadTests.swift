@@ -51,6 +51,7 @@ struct AppModelLoadTests {
     }
 
     @Test func appModelRetriesAfterTransientCancellation() async throws {
+        TestIsolation.resetUserDefaultsAndCatalog()
         let context = try makeContext()
         let extremesData = try FixtureLoader.data(named: "marina_del_rey_hilo")
         let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
@@ -80,6 +81,7 @@ struct AppModelLoadTests {
     }
 
     @Test func appModelPublishesSharedSnapshotPayloadOnLoad() async throws {
+        TestIsolation.resetUserDefaultsAndCatalog()
         let context = try makeContext()
         let extremesData = try FixtureLoader.data(named: "marina_del_rey_hilo")
         let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")

@@ -7,7 +7,8 @@ enum TideStationResolver {
             name: record.name,
             latitude: record.lat,
             longitude: record.lng,
-            datum: "MLLW"
+            datum: "MLLW",
+            state: record.state
         )
     }
 
@@ -16,14 +17,16 @@ enum TideStationResolver {
         name: String,
         latitude: Double,
         longitude: Double,
-        datum: String = "MLLW"
+        datum: String = "MLLW",
+        state: String = "CA"
     ) -> TideStation {
         TideStation(
             id: id,
             name: name,
             latitude: latitude,
             longitude: longitude,
-            datum: datum
+            datum: datum,
+            state: state
         )
     }
 }

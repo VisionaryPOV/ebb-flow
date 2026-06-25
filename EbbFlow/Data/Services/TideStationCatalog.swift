@@ -33,19 +33,29 @@ enum TideStationCatalog {
     }
 
     static func timeZone(for station: TideStation) -> TimeZone {
-        timeZone(forStationID: station.id, latitude: station.latitude, longitude: station.longitude)
+        if let record = registry[station.id] ?? knownRecord(for: station.id) {
+            return NOAAStationDiscovery.timeZone(for: record)
+        }
+        return timeZone(forState: station.state)
     }
 
     static func timeZone(forStationID id: String) -> TimeZone {
-        timeZone(forStationID: id, latitude: nil, longitude: nil)
-    }
-
-    private static func timeZone(forStationID id: String, latitude: Double?, longitude: Double?) -> TimeZone {
         if let record = registry[id] ?? knownRecord(for: id) {
             return NOAAStationDiscovery.timeZone(for: record)
         }
+        if let persisted = UserPreferencesStore.lastStation(), persisted.id == id {
+            return timeZone(forState: persisted.state)
+        }
         if id == TideStation.marinaDelRey.id {
-            return TideDataTransformer.noaaLocalTimeZone
+            return timeZone(forState: "CA")
+        }
+        return timeZone(forState: "CA")
+    }
+
+    static func timeZone(forState state: String) -> TimeZone {
+        if let identifier = NOAAStationDiscovery.timeZoneIdentifier(for: state),
+           let timeZone = TimeZone(identifier: identifier) {
+            return timeZone
         }
         return TideDataTransformer.noaaLocalTimeZone
     }
@@ -57,7 +67,7 @@ enum TideStationCatalog {
             name: station.name,
             lat: station.latitude,
             lng: station.longitude,
-            state: "CA",
+            state: station.state,
             type: "R",
             timezonecorr: -8
         )

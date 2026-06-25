@@ -4,12 +4,14 @@ import Testing
 
 @MainActor
 struct RootViewLaunchTests {
+    private static let hawaii = TimeZone(identifier: "Pacific/Honolulu")!
     private static let makena = TideStation(
         id: "1615202",
         name: "Makena",
         latitude: 20.6567,
         longitude: -156.445,
-        datum: "MLLW"
+        datum: "MLLW",
+        state: "HI"
     )
 
     @Test func appModelInitRestoresPersistedStationID() throws {
@@ -46,7 +48,8 @@ struct RootViewLaunchTests {
 
         #expect(model.selectedStation.id == "1615202")
         #expect(model.selectedStation.name == "Makena")
-        #expect(model.selectedStation.latitude == 20.6567)
+        #expect(model.selectedStation.state == "HI")
+        #expect(TideStationCatalog.timeZone(for: model.selectedStation).identifier == Self.hawaii.identifier)
 
         TestIsolation.resetUserDefaultsAndCatalog()
     }
@@ -62,7 +65,7 @@ struct RootViewLaunchTests {
         let metadata = FixtureNOAAStationFetcher(stations: [])
 
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "Pacific/Honolulu")!
+        calendar.timeZone = Self.hawaii
         let referenceDate = calendar.date(from: DateComponents(year: 2025, month: 6, day: 24, hour: 10))!
         let context = try TestIsolation.makeModelContext()
         let cache = SwiftDataTideCache(modelContext: context)
@@ -80,6 +83,7 @@ struct RootViewLaunchTests {
         )
 
         #expect(model.selectedStation.id == "1615202")
+        #expect(TideStationCatalog.timeZone(for: model.selectedStation).identifier == Self.hawaii.identifier)
 
         await model.restoreLastStation()
 
@@ -87,7 +91,11 @@ struct RootViewLaunchTests {
         #expect(model.selectedStation.name == "Makena")
         #expect(model.snapshot != nil)
         #expect(model.snapshot?.extremes.isEmpty == false)
+        #expect(model.snapshot?.currentState.coversReferenceDate == true)
 
-        TestIsolation.resetUserDefaultsAndCatalog()
+        let firstExtreme = try #require(model.snapshot?.extremes.first)
+        let components = calendar.dateComponents([.hour, .minute], from: firstExtreme.time)
+        #expect(components.hour == 2)
+        #expect(components.minute == 12)
     }
 }
