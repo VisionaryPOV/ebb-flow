@@ -22,6 +22,8 @@ targets:
           - "**/.DS_Store"
       - path: Shared
     resources:
+      - path: EbbFlow/Resources/Assets.xcassets
+        buildPhase: resources
       - path: EbbFlow/Resources/Fixtures
         buildPhase: resources
     entitlements:
