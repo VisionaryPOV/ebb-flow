@@ -93,7 +93,6 @@
 		D9F7279C9BAA61EACC8206C0 /* TideTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56789A2F710A29D0EE1E2923 /* TideTableView.swift */; };
 		DB0D2B574812F6124E955484 /* SwiftDataTideCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36759E0F8E240E0C6450E17C /* SwiftDataTideCacheTests.swift */; };
 		DC7170F1C0EAAFC670A8415B /* TideLiveActivityBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD733603D9910CEA4F7FA9F8 /* TideLiveActivityBuilder.swift */; };
-		DDE66C3450A9BBFD59953196 /* AppIcon-preview.png in Resources */ = {isa = PBXBuildFile; fileRef = DBDCC56E3A2289A243E736C0 /* AppIcon-preview.png */; };
 		DE4C570F84FE0A166ED02D48 /* Phase3Phase4Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D2FD3B4741D79E38451C2 /* Phase3Phase4Tests.swift */; };
 		DFF9858D500F0399427BFAEB /* FailingTideFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E77A5B0D0A8834540CB65A /* FailingTideFetcher.swift */; };
 		E1C8DF6198B230F660751D08 /* WidgetTimelineBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A125CECFEC53ADA9767FD6 /* WidgetTimelineBuilder.swift */; };
@@ -235,7 +234,6 @@
 		D505ED0A051ADB6D6F9EF3F2 /* TideExtreme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideExtreme.swift; sourceTree = "<group>"; };
 		D841F4DB45FF238672CF5F72 /* WorldTidesConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTidesConfiguration.swift; sourceTree = "<group>"; };
 		DA39C6A35DD08B3FC413C301 /* FixtureLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureLoader.swift; sourceTree = "<group>"; };
-		DBDCC56E3A2289A243E736C0 /* AppIcon-preview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-preview.png"; sourceTree = "<group>"; };
 		DD733603D9910CEA4F7FA9F8 /* TideLiveActivityBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideLiveActivityBuilder.swift; sourceTree = "<group>"; };
 		DE7F1FC21EDBCFF4B216CE0A /* WaveFillCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveFillCalculator.swift; sourceTree = "<group>"; };
 		E1E99D61DB9E40EDF76D74B2 /* marina_del_rey_hilo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = marina_del_rey_hilo.json; sourceTree = "<group>"; };
@@ -369,7 +367,6 @@
 			isa = PBXGroup;
 			children = (
 				5A8AD7E4CB10400004B1A1C3 /* Fixtures */,
-				DBDCC56E3A2289A243E736C0 /* AppIcon-preview.png */,
 				739BA8E070436E02B9F6C616 /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -729,7 +726,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDE66C3450A9BBFD59953196 /* AppIcon-preview.png in Resources */,
 				C2BA2136024EB9945BADE9D3 /* Assets.xcassets in Resources */,
 				2A632331B1D0BEB29794F8F9 /* marina_del_rey_heights.json in Resources */,
 				EE6B50F99E9E5C4999D429A1 /* marina_del_rey_hilo.json in Resources */,
