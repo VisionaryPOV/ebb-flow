@@ -57,11 +57,7 @@ final class AppModel {
     }
 
     static func stationFromPreferences() -> TideStation {
-        if let lastID = UserPreferencesStore.lastStationID(),
-           let station = TideStationCatalog.resolve(id: lastID) {
-            return station
-        }
-        return .marinaDelRey
+        UserPreferencesStore.lastStation() ?? .marinaDelRey
     }
 
     func restoreLastStation() async {
@@ -114,7 +110,7 @@ final class AppModel {
                 days: chartScale.loadDays
             )
             snapshot = loaded
-            UserPreferencesStore.saveLastStationID(station.id)
+            UserPreferencesStore.saveLastStation(station)
             let display = displaySnapshot(from: loaded)
             SharedTideDataStore.write(display)
             if storeManager.canAccess(.liveActivities) {

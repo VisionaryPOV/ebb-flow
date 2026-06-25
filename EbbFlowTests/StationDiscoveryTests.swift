@@ -98,10 +98,22 @@ struct StationDiscoveryTests {
 
     @Test func userPreferencesRoundtrip() {
         TestIsolation.resetUserDefaultsAndCatalog()
-        #expect(UserPreferencesStore.lastStationID() == nil)
+        TideStationCatalog.clearRegistryForTesting()
+        #expect(UserPreferencesStore.lastStation() == nil)
         #expect(UserPreferencesStore.needsDefaultFavoriteSeed)
-        UserPreferencesStore.saveLastStationID("1615202")
-        #expect(UserPreferencesStore.lastStationID() == "1615202")
+
+        let makena = TideStation(
+            id: "1615202",
+            name: "Makena",
+            latitude: 20.6567,
+            longitude: -156.445,
+            datum: "MLLW"
+        )
+        UserPreferencesStore.saveLastStation(makena)
+        let restored = UserPreferencesStore.lastStation()
+        #expect(restored?.id == "1615202")
+        #expect(restored?.name == "Makena")
+
         UserPreferencesStore.markDefaultFavoriteSeeded()
         #expect(UserPreferencesStore.needsDefaultFavoriteSeed == false)
         TestIsolation.resetUserDefaultsAndCatalog()
@@ -111,9 +123,10 @@ struct StationDiscoveryTests {
     @MainActor
     @Test func restoreLastStationUsesPersistedID() async throws {
         TestIsolation.resetUserDefaultsAndCatalog()
+        TideStationCatalog.clearRegistryForTesting()
         let stations = try sampleStations()
-        TideStationCatalog.register(stations)
-        UserPreferencesStore.saveLastStationID("1615202")
+        let makena = TideStationResolver.makeStation(from: try #require(stations.first(where: { $0.id == "1615202" })))
+        UserPreferencesStore.saveLastStation(makena)
 
         let fetcher = FixtureNOAAStationFetcher(stations: stations)
         let extremesData = try FixtureLoader.data(named: "makena_hilo")
