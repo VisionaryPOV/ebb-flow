@@ -5,13 +5,21 @@ enum TideStationCatalog {
         "9410840": .marinaDelRey
     ]
     nonisolated(unsafe) private static var registry: [String: NOAAStationRecord] = [:]
+    nonisolated(unsafe) private static var knownPersistedStations: [String: TideStation] = [:]
 
     static func register(_ records: [NOAAStationRecord]) {
         registry = Dictionary(uniqueKeysWithValues: records.map { ($0.id, $0) })
     }
 
+    static func registerKnownStations(_ stations: [TideStation]) {
+        for station in stations {
+            knownPersistedStations[station.id] = station
+        }
+    }
+
     static func clearRegistryForTesting() {
         registry = [:]
+        knownPersistedStations = [:]
     }
 
     static func record(for id: String) -> NOAAStationRecord? {
@@ -24,6 +32,12 @@ enum TideStationCatalog {
         }
         if let record = registry[id] {
             return TideStationResolver.makeStation(from: record)
+        }
+        if let persisted = knownPersistedStations[id] {
+            return persisted
+        }
+        if let last = UserPreferencesStore.lastStation(), last.id == id {
+            return last
         }
         return nil
     }

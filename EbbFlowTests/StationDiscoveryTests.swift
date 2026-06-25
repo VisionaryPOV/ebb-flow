@@ -166,6 +166,24 @@ struct StationDiscoveryTests {
         TestIsolation.resetUserDefaultsAndCatalog()
     }
 
+    @Test func catalogResolvesFavoriteWithoutRegistry() {
+        TestIsolation.resetUserDefaultsAndCatalog()
+        TideStationCatalog.clearRegistryForTesting()
+        let makena = TideStation(
+            id: "1615202",
+            name: "Makena",
+            latitude: 20.6567,
+            longitude: -156.445,
+            datum: "MLLW",
+            state: "HI"
+        )
+        TideStationCatalog.registerKnownStations([makena])
+        let resolved = TideStationCatalog.resolve(id: "1615202")
+        #expect(resolved?.state == "HI")
+        #expect(TideStationCatalog.timeZone(for: resolved!).identifier == Self.hawaii.identifier)
+        TestIsolation.resetUserDefaultsAndCatalog()
+    }
+
     @Test func timeZoneForHawaiiStationWithoutRegistry() {
         TestIsolation.resetUserDefaultsAndCatalog()
         TideStationCatalog.clearRegistryForTesting()

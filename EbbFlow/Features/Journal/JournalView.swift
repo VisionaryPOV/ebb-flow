@@ -27,7 +27,7 @@ struct JournalView: View {
                     ForEach(filteredEntries, id: \.id) { entry in
                         VStack(alignment: .leading, spacing: 4) {
                             Text(entry.stationName).font(.headline)
-                            Text(formatted(entry.recordedAt)).font(.caption).foregroundStyle(.secondary)
+                            Text(formatted(entry)).font(.caption).foregroundStyle(.secondary)
                             Text(String(format: "%.1f ft", entry.tideHeightFeet)).monospacedDigit()
                             if !entry.notes.isEmpty { Text(entry.notes) }
                         }
@@ -74,10 +74,19 @@ struct JournalView: View {
         reload()
     }
 
-    private func formatted(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+    private func formatted(_ entry: JournalEntry) -> String {
+        let station = TideStationCatalog.resolve(id: entry.stationID)
+            ?? TideStation(
+                id: entry.stationID,
+                name: entry.stationName,
+                latitude: 0,
+                longitude: 0,
+                datum: "MLLW",
+                state: "CA"
+            )
+        return TideDataTransformer.formatMediumDateTime(
+            entry.recordedAt,
+            timeZone: TideStationCatalog.timeZone(for: station)
+        )
     }
 }

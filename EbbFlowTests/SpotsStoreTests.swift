@@ -51,4 +51,33 @@ struct SpotsStoreTests {
         #expect(spots.count == 1)
         #expect(spots.first?.notes == "Updated")
     }
+
+    @Test func addDuplicateRefreshesStationMetadata() throws {
+        let context = try makeContext()
+        let store = SpotsStore(modelContext: context)
+        let makena = TideStation(
+            id: "1615202",
+            name: "Makena",
+            latitude: 20.6567,
+            longitude: -156.445,
+            datum: "MLLW",
+            state: "HI"
+        )
+
+        try store.addSpot(for: makena, notes: "First")
+        let updated = TideStation(
+            id: "1615202",
+            name: "McKenna Beach",
+            latitude: 20.6567,
+            longitude: -156.445,
+            datum: "MLLW",
+            state: "HI"
+        )
+        try store.addSpot(for: updated, notes: "Second")
+
+        let spot = try #require(try store.spot(stationID: "1615202"))
+        #expect(spot.name == "McKenna Beach")
+        #expect(spot.state == "HI")
+        #expect(spot.notes == "Second")
+    }
 }

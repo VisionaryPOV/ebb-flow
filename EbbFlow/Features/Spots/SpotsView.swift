@@ -44,6 +44,7 @@ struct SpotsView: View {
             StationSearchView(appModel: appModel)
         }
         .task { reload() }
+        .onChange(of: appModel.spotsRevision) { _, _ in reload() }
         .refreshable { reload() }
         .sheet(isPresented: Binding(
             get: { editingStationID != nil },

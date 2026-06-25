@@ -53,6 +53,7 @@ final class AppModel {
         self.stationMetadata = stationMetadata ?? NOAAStationMetadataClient()
         self.locationService = locationService ?? LocationService()
         self.selectedStation = selectedStation ?? Self.stationFromPreferences()
+        registerPersistedStationsForCatalog()
         seedDefaultFavoriteIfNeeded(notify: false)
     }
 
@@ -62,7 +63,14 @@ final class AppModel {
 
     func restoreLastStation() async {
         seedDefaultFavoriteIfNeeded(notify: true)
-        _ = try? await stationMetadata.allStations()
+        registerPersistedStationsForCatalog()
+        do {
+            _ = try await stationMetadata.allStations()
+        } catch {
+            Self.logger.warning(
+                "Station metadata fetch failed; using persisted stations: \(error.localizedDescription, privacy: .public)"
+            )
+        }
 
         selectedStation = Self.stationFromPreferences()
         await load(station: selectedStation)
@@ -111,6 +119,7 @@ final class AppModel {
             )
             snapshot = loaded
             UserPreferencesStore.saveLastStation(station)
+            registerPersistedStationsForCatalog()
             let display = displaySnapshot(from: loaded)
             SharedTideDataStore.write(display)
             if storeManager.canAccess(.liveActivities) {
@@ -148,6 +157,7 @@ final class AppModel {
     }
 
     func notifySpotsChanged() {
+        registerPersistedStationsForCatalog()
         spotsRevision += 1
     }
 
@@ -301,9 +311,21 @@ final class AppModel {
                 if notify { notifySpotsChanged() }
             }
             UserPreferencesStore.markDefaultFavoriteSeeded()
+            registerPersistedStationsForCatalog()
         } catch {
             NSLog("EbbFlow: Failed to seed default favorite %@", error.localizedDescription)
         }
+    }
+
+    private func registerPersistedStationsForCatalog() {
+        var stations: [TideStation] = [selectedStation]
+        if let last = UserPreferencesStore.lastStation() {
+            stations.append(last)
+        }
+        if let spots = try? spotsStore.allSpots() {
+            stations.append(contentsOf: spots.map(\.station))
+        }
+        TideStationCatalog.registerKnownStations(stations)
     }
 
     func logJournalEntry(notes: String, photoPath: String = "") {

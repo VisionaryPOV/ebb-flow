@@ -33,6 +33,11 @@ final class SpotsStore {
             if !photoPath.isEmpty, photoPath != existing.photoPath {
                 PhotoStorage.delete(path: existing.photoPath)
             }
+            existing.name = station.name
+            existing.latitude = station.latitude
+            existing.longitude = station.longitude
+            existing.datum = station.datum
+            existing.state = station.state
             existing.notes = notes
             existing.photoPath = photoPath
             existing.personalOffsetFeet = personalOffsetFeet

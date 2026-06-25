@@ -37,7 +37,14 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
     }
 
     func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
-        try await fetchJSON(stationID: stationID, from: from, to: to, includeExtremes: true, includeHeights: false)
+        try await fetchJSON(
+            stationID: stationID,
+            from: from,
+            to: to,
+            includeExtremes: true,
+            includeHeights: false,
+            timeZone: timeZone
+        )
     }
 
     func fetchHeights(
@@ -47,7 +54,14 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
         intervalMinutes: Int,
         timeZone: TimeZone
     ) async throws -> Data {
-        try await fetchJSON(stationID: stationID, from: from, to: to, includeExtremes: false, includeHeights: true)
+        try await fetchJSON(
+            stationID: stationID,
+            from: from,
+            to: to,
+            includeExtremes: false,
+            includeHeights: true,
+            timeZone: timeZone
+        )
     }
 
     private func fetchJSON(
@@ -55,7 +69,8 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
         from: Date,
         to: Date,
         includeExtremes: Bool,
-        includeHeights: Bool
+        includeHeights: Bool,
+        timeZone: TimeZone
     ) async throws -> Data {
         guard !apiKey.isEmpty else { throw TideServiceError.invalidRequest }
 
@@ -84,21 +99,28 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
         }
 
         let worldTides = try JSONDecoder().decode(WorldTidesResponse.self, from: data)
-        return try convertToNOAAFormat(worldTides, includeExtremes: includeExtremes, includeHeights: includeHeights)
+        return try convertToNOAAFormat(
+            worldTides,
+            includeExtremes: includeExtremes,
+            includeHeights: includeHeights,
+            timeZone: timeZone
+        )
     }
 
     private func convertToNOAAFormat(
         _ response: WorldTidesResponse,
         includeExtremes: Bool,
-        includeHeights: Bool
+        includeHeights: Bool,
+        timeZone: TimeZone
     ) throws -> Data {
+        let formatter = TideDataTransformer.makePredictionDateFormatter(timeZone: timeZone)
         var predictions: [[String: String]] = []
 
         if includeExtremes, let extremes = response.extremes {
             for extreme in extremes {
                 let date = Date(timeIntervalSince1970: TimeInterval(extreme.dt))
                 predictions.append([
-                    "t": TideDataTransformer.makePredictionDateFormatter(timeZone: TideDataTransformer.noaaLocalTimeZone).string(from: date),
+                    "t": formatter.string(from: date),
                     "v": String(format: "%.3f", extreme.height),
                     "type": extreme.type == "High" ? "H" : "L"
                 ])
@@ -109,7 +131,7 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
             for height in heights {
                 let date = Date(timeIntervalSince1970: TimeInterval(height.dt))
                 predictions.append([
-                    "t": TideDataTransformer.makePredictionDateFormatter(timeZone: TideDataTransformer.noaaLocalTimeZone).string(from: date),
+                    "t": formatter.string(from: date),
                     "v": String(format: "%.3f", height.height)
                 ])
             }
