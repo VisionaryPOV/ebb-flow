@@ -1,4 +1,5 @@
 import Foundation
+import CoreLocation
 import os
 import SwiftData
 import SwiftUI
@@ -13,7 +14,7 @@ enum TideExportKind: Sendable {
 final class AppModel {
     private static let logger = Logger(subsystem: "com.ebbflow.app", category: "TideLoad")
     private static let maxLoadAttempts = 3
-    private static let freeSpotLimit = 1
+    private static let freeSpotLimit = 3
 
     var selectedStation: TideStation
     var snapshot: TideSnapshot?
@@ -28,12 +29,16 @@ final class AppModel {
     let spotsStore: SpotsStore
     let journalStore: JournalStore
     let storeManager: StoreKitManager
+    let stationMetadata: any NOAAStationFetching
+    let locationService: any LocationProviding
 
     init(
         modelContext: ModelContext,
         selectedStation: TideStation = .marinaDelRey,
         tideService: CompositeTideService? = nil,
-        storeManager: StoreKitManager = StoreKitManager()
+        storeManager: StoreKitManager = StoreKitManager(),
+        stationMetadata: (any NOAAStationFetching)? = nil,
+        locationService: (any LocationProviding)? = nil
     ) {
         if let tideService {
             self.tideService = tideService
@@ -45,11 +50,51 @@ final class AppModel {
         self.spotsStore = SpotsStore(modelContext: modelContext)
         self.journalStore = JournalStore(modelContext: modelContext)
         self.storeManager = storeManager
+        self.stationMetadata = stationMetadata ?? NOAAStationMetadataClient()
+        self.locationService = locationService ?? LocationService()
         self.selectedStation = selectedStation
+    }
+
+    func restoreLastStation() async {
+        seedDefaultFavoriteIfNeeded()
+        _ = try? await stationMetadata.allStations()
+
+        if let lastID = UserPreferencesStore.lastStationID(),
+           let station = TideStationCatalog.resolve(id: lastID) {
+            selectedStation = station
+        }
+
+        await load(station: selectedStation)
     }
 
     func loadDefaultStation() async {
         await load(station: selectedStation)
+    }
+
+    func selectStation(_ station: TideStation, favorite: Bool = false) async {
+        if favorite {
+            addFavoriteIfAllowed(station: station)
+            notifySpotsChanged()
+        }
+        await load(station: station)
+    }
+
+    func selectStation(record: NOAAStationRecord, favorite: Bool = false) async {
+        await selectStation(TideStationResolver.makeStation(from: record), favorite: favorite)
+    }
+
+    func selectNearestStation() async {
+        do {
+            let coordinate = try await locationService.currentCoordinate()
+            let stations = try await stationMetadata.allStations()
+            guard let nearest = NOAAStationDiscovery.nearest(stations: stations, to: coordinate).first else {
+                errorMessage = "No tide stations found near your location."
+                return
+            }
+            await selectStation(record: nearest.record)
+        } catch {
+            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
     }
 
     func load(station: TideStation, attempt: Int = 1) async {
@@ -64,6 +109,7 @@ final class AppModel {
                 days: chartScale.loadDays
             )
             snapshot = loaded
+            UserPreferencesStore.saveLastStationID(station.id)
             let display = displaySnapshot(from: loaded)
             SharedTideDataStore.write(display)
             if storeManager.canAccess(.liveActivities) {
@@ -104,6 +150,13 @@ final class AppModel {
         spotsRevision += 1
     }
 
+    var displayStationName: String {
+        if let spot = try? spotsStore.spot(stationID: selectedStation.id) {
+            return spot.name
+        }
+        return selectedStation.name
+    }
+
     func toggleTableColumn(_ column: TideTableColumn) {
         if tableColumns.contains(column) {
             guard tableColumns.count > 1 else { return }
@@ -124,7 +177,7 @@ final class AppModel {
         case .pdf:
             return try TideExporter.writePDFFile(
                 rows: tableRows,
-                stationName: selectedStation.name,
+                stationName: displayStationName,
                 stationID: selectedStation.id,
                 columns: tableColumns,
                 timeZone: timeZone
@@ -166,7 +219,7 @@ final class AppModel {
     func exportCSV(timeZone: TimeZone? = nil) -> String {
         TideExporter.csv(
             rows: tableRows,
-            stationName: selectedStation.name,
+            stationName: displayStationName,
             columns: tableColumns,
             timeZone: timeZone ?? exportTimeZone
         )
@@ -177,7 +230,7 @@ final class AppModel {
     var exportPDF: Data {
         TideExporter.pdfData(
             rows: tableRows,
-            stationName: selectedStation.name,
+            stationName: displayStationName,
             columns: tableColumns,
             timeZone: exportTimeZone
         )
@@ -208,16 +261,37 @@ final class AppModel {
             if try spotsStore.contains(stationID: selectedStation.id) {
                 try spotsStore.removeSpot(stationID: selectedStation.id)
             } else {
-                let count = try spotsStore.allSpots().count
-                if count >= Self.freeSpotLimit, !storeManager.canAccess(.unlimitedSpots) {
-                    errorMessage = "Upgrade to Pro for unlimited favorite spots."
-                    return
-                }
-                try spotsStore.addSpot(for: selectedStation)
+                addFavoriteIfAllowed(station: selectedStation)
             }
             notifySpotsChanged()
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    private func addFavoriteIfAllowed(station: TideStation) {
+        do {
+            let count = try spotsStore.allSpots().count
+            if count >= Self.freeSpotLimit, !storeManager.canAccess(.unlimitedSpots) {
+                errorMessage = "Upgrade to Pro for unlimited favorite spots."
+                return
+            }
+            try spotsStore.addSpot(for: station)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func seedDefaultFavoriteIfNeeded() {
+        guard UserPreferencesStore.needsDefaultFavoriteSeed else { return }
+        do {
+            if try !spotsStore.contains(stationID: TideStation.marinaDelRey.id) {
+                try spotsStore.addSpot(for: .marinaDelRey)
+                notifySpotsChanged()
+            }
+            UserPreferencesStore.markDefaultFavoriteSeeded()
+        } catch {
+            NSLog("EbbFlow: Failed to seed default favorite %@", error.localizedDescription)
         }
     }
 

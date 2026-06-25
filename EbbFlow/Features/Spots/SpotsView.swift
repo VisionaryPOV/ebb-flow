@@ -5,6 +5,7 @@ struct SpotsView: View {
     @Bindable var appModel: AppModel
     @State private var spots: [FavoriteSpot] = []
     @State private var editingStationID: String?
+    @State private var showingStationSearch = false
 
     var body: some View {
         List {
@@ -12,7 +13,7 @@ struct SpotsView: View {
                 ContentUnavailableView(
                     "No spots yet",
                     systemImage: "mappin.and.ellipse",
-                    description: Text("Save a station from Today to build your coast.")
+                    description: Text("Find a tide station or save one from Today.")
                 )
             } else {
                 ForEach(spots, id: \.stationID) { spot in
@@ -29,6 +30,19 @@ struct SpotsView: View {
             }
         }
         .navigationTitle("My Spots")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showingStationSearch = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .accessibilityLabel("Add spot")
+            }
+        }
+        .sheet(isPresented: $showingStationSearch) {
+            StationSearchView(appModel: appModel)
+        }
         .task { reload() }
         .refreshable { reload() }
         .sheet(isPresented: Binding(
@@ -95,6 +109,7 @@ private struct SpotEditorSheet: View {
     @Bindable var appModel: AppModel
     let onSave: () -> Void
     @Environment(\.dismiss) private var dismiss
+    @State private var name: String
     @State private var notes: String
     @State private var offset: Double
     @State private var photoItem: PhotosPickerItem?
@@ -104,6 +119,7 @@ private struct SpotEditorSheet: View {
         self.spot = spot
         self.appModel = appModel
         self.onSave = onSave
+        _name = State(initialValue: spot.name)
         _notes = State(initialValue: spot.notes)
         _offset = State(initialValue: spot.personalOffsetFeet)
         _photoPath = State(initialValue: spot.photoPath)
@@ -112,6 +128,9 @@ private struct SpotEditorSheet: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Display Name") {
+                    TextField("Name", text: $name)
+                }
                 Section("Notes") {
                     TextField("Notes", text: $notes, axis: .vertical)
                 }
@@ -143,6 +162,7 @@ private struct SpotEditorSheet: View {
     private func save() {
         try? appModel.spotsStore.updateSpot(
             stationID: spot.stationID,
+            name: name,
             notes: notes,
             photoPath: photoPath,
             personalOffsetFeet: offset

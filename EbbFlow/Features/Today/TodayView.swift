@@ -3,6 +3,7 @@ import SwiftUI
 struct TodayView: View {
     @Bindable var appModel: AppModel
     @State private var exportItem: TideExportItem?
+    @State private var showingStationSearch = false
 
     var body: some View {
         ScrollView {
@@ -20,6 +21,9 @@ struct TodayView: View {
         .toolbar { toolbarContent }
         .sheet(item: $exportItem) { item in
             TideExportShareSheet(url: item.url)
+        }
+        .sheet(isPresented: $showingStationSearch) {
+            StationSearchView(appModel: appModel)
         }
         .scrollEdgeEffectStyle(.hard, for: .top)
     }
@@ -57,9 +61,20 @@ struct TodayView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(appModel.selectedStation.name)
-                .font(.largeTitle.bold())
-                .foregroundStyle(.white)
+            Button {
+                showingStationSearch = true
+            } label: {
+                HStack(spacing: 8) {
+                    Text(appModel.displayStationName)
+                        .font(.largeTitle.bold())
+                        .foregroundStyle(.white)
+                    Image(systemName: "chevron.down.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Change station")
             Text("Datum: \(appModel.selectedStation.datum) · Predictions only")
                 .font(.footnote)
                 .foregroundStyle(.white.opacity(0.75))

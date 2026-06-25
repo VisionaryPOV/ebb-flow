@@ -30,10 +30,10 @@ private struct AppRootContent: View {
             .onAppear {
                 guard !initialLoadStarted else { return }
                 initialLoadStarted = true
-                Task { await appModel.loadDefaultStation() }
+                Task { await appModel.restoreLastStation() }
             }
             .onReceive(NotificationCenter.default.publisher(for: .ebbFlowRefreshTides)) { _ in
-                Task { await appModel.loadDefaultStation() }
+                Task { await appModel.restoreLastStation() }
             }
             .onReceive(NotificationCenter.default.publisher(for: .ebbFlowSetChartScale)) { notification in
                 guard let scale = notification.object as? ChartTimeScale else { return }

@@ -1,0 +1,17 @@
+{
+  "count": 12,
+  "stations": [
+    {"id": "9410840", "name": "Marina del Rey", "lat": 33.9767, "lng": -118.4567, "state": "CA", "type": "R", "timezonecorr": -8},
+    {"id": "9410170", "name": "Santa Monica", "lat": 34.0083, "lng": -118.5, "state": "CA", "type": "R", "timezonecorr": -8},
+    {"id": "1615202", "name": "Makena", "lat": 20.6567, "lng": -156.445, "state": "HI", "type": "S", "timezonecorr": -10},
+    {"id": "1615680", "name": "KAHULUI", "lat": 20.8949, "lng": -156.469, "state": "HI", "type": "R", "timezonecorr": -10},
+    {"id": "1612340", "name": "HONOLULU", "lat": 21.3033, "lng": -157.8645, "state": "HI", "type": "R", "timezonecorr": -10},
+    {"id": "8443970", "name": "Boston", "lat": 42.3583, "lng": -71.0533, "state": "MA", "type": "R", "timezonecorr": -5},
+    {"id": "8724580", "name": "Key West", "lat": 24.5508, "lng": -81.8083, "state": "FL", "type": "R", "timezonecorr": -5},
+    {"id": "8761724", "name": "New Orleans", "lat": 29.9333, "lng": -90.1333, "state": "LA", "type": "R", "timezonecorr": -6},
+    {"id": "9447130", "name": "Seattle", "lat": 47.6026, "lng": -122.3393, "state": "WA", "type": "R", "timezonecorr": -8},
+    {"id": "9452210", "name": "Ketchikan", "lat": 55.3317, "lng": -131.6267, "state": "AK", "type": "R", "timezonecorr": -9},
+    {"id": "1630000", "name": "APRA HARBOR, GUAM", "lat": 13.4434, "lng": 144.6564, "state": "GU", "type": "R", "timezonecorr": 10},
+    {"id": "1770000", "name": "PAGO PAGO Harbor", "lat": -14.28, "lng": -170.69, "state": "AS", "type": "R", "timezonecorr": -11}
+  ]
+}

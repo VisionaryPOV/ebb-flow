@@ -29,6 +29,17 @@ struct SpotsStoreTests {
         #expect(try store.allSpots().isEmpty)
     }
 
+    @Test func renameSpotUpdatesDisplayName() throws {
+        let context = try makeContext()
+        let store = SpotsStore(modelContext: context)
+
+        try store.addSpot(for: .marinaDelRey)
+        try store.updateSpot(stationID: "9410840", name: "My Marina", notes: nil, photoPath: nil, personalOffsetFeet: nil)
+
+        let spot = try #require(try store.spot(stationID: "9410840"))
+        #expect(spot.name == "My Marina")
+    }
+
     @Test func addDuplicateUpdatesNotes() throws {
         let context = try makeContext()
         let store = SpotsStore(modelContext: context)

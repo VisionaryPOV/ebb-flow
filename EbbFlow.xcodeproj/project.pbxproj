@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		035D6D3E4291CD68F63542E6 /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793C79F8EAE7997966701559 /* JournalView.swift */; };
 		03DC4DFE8ECC18427108B596 /* CompositeTideService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C4D19FA9E60D09641347C86 /* CompositeTideService.swift */; };
+		05D40E52A9DD22E770BE04AE /* noaa_stations_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = D4F4344F8294F842BA8020A8 /* noaa_stations_sample.json */; };
 		0692B02F1F5D9556755A7950 /* TideCacheRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8320455FA65B1D49AC87F430 /* TideCacheRepository.swift */; };
 		07CA61ECEB4416F76F3AE225 /* TideStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E049D533EE4D444F0743BB /* TideStation.swift */; };
 		07FA3FA084C9020CBF40085A /* TideDateRangeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D21D2CAF20C4D497BF44D /* TideDateRangeCalculator.swift */; };
@@ -31,18 +32,22 @@
 		29FAAE3642CF41D64489B57D /* WorldTidesConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D841F4DB45FF238672CF5F72 /* WorldTidesConfiguration.swift */; };
 		2A632331B1D0BEB29794F8F9 /* marina_del_rey_heights.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C7E9555F1EE461F5DF1331B /* marina_del_rey_heights.json */; };
 		2AEF7D437435FEAF3C184141 /* AppModelLoadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFF2BD17A1EABCC8A001023 /* AppModelLoadTests.swift */; };
+		302831E2BA9D4E4B1639257B /* TideStationResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26F8190BBCD6189626C995D /* TideStationResolver.swift */; };
 		326B89CECC4841F0F6CA4A1C /* TideLiveActivityBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD733603D9910CEA4F7FA9F8 /* TideLiveActivityBuilder.swift */; };
 		34A726BF36299A84B17A558F /* InMemoryTideCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11210C467DB056CDEE63B538 /* InMemoryTideCache.swift */; };
 		3817F8C782C22DD6FFFC34C5 /* TideLiveActivityBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD733603D9910CEA4F7FA9F8 /* TideLiveActivityBuilder.swift */; };
 		41325919946C61B8B52A5894 /* TestDateHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F413D46832E26A49FF26C832 /* TestDateHolder.swift */; };
 		44B851A967ABBD341F050F6D /* TideActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88E32129B1996AE5E72AB43 /* TideActivityAttributes.swift */; };
 		49B442BD872D4661A9A85740 /* CancellingOnceFixtureFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F627B5F86EADEFE86791C177 /* CancellingOnceFixtureFetcher.swift */; };
+		4E94CB9EBA1F7D572906D55E /* StationSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A921C43971DEFB8B71157959 /* StationSearchView.swift */; };
 		5038E37CF502241DEEFCF00A /* SharedTideSnapshotPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F8F106AF23DB2595F250C6 /* SharedTideSnapshotPayload.swift */; };
 		50B3023C51223BF2908CF5C4 /* Phase2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4960B05F1B4DCA1B25FB90A /* Phase2Tests.swift */; };
 		50D54841E32D28597A457EF8 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB653052A40AC61A0AA2FC /* MoreView.swift */; };
+		5508E68ED11C0760D6D1B633 /* UserPreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CBBBB7A5CB93CB692F1A59 /* UserPreferencesStore.swift */; };
 		55A592148AC565BE4D352D32 /* TideSnapshotSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFED0B907E9D28E09B53F64 /* TideSnapshotSharing.swift */; };
 		581117EDD30E7190B892C288 /* SharedTideSnapshotPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F8F106AF23DB2595F250C6 /* SharedTideSnapshotPayload.swift */; };
 		5ABC12D8DD8D501F9320FBD0 /* WatchTimelineBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D23A269C7CB40A0EDA951A /* WatchTimelineBuilder.swift */; };
+		5D8E3C76704DFD082D97BE3C /* StationDiscoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA531D97E6B8EC86EDB7288 /* StationDiscoveryTests.swift */; };
 		5DBE510167357033D4D35B23 /* EbbFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */; };
 		5FC002EC788B6C19E86B86F0 /* AdaptiveRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FBA4120C8211921497EF0B /* AdaptiveRootView.swift */; };
 		640BEA3ABC5C898E357D4E8B /* TideInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E006FE088685BDCFE8A86E /* TideInterpolator.swift */; };
@@ -63,6 +68,7 @@
 		92EC59BD4CC62D313A198635 /* TideIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81E2B3647E1BF2CA031262F /* TideIntents.swift */; };
 		937B7C056702AF8543E6F2D6 /* SharedTideDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8F2CBAD8DD2C53B7C43CBA /* SharedTideDataStore.swift */; };
 		94C1BDA911D0C800FCFA6BF8 /* TideHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACDE75FC1A2C142E2E18AAE /* TideHeight.swift */; };
+		98C3B3AA0B79E24316F3C4F0 /* NOAAStationMetadataClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32968550F4B0E81FC43325D3 /* NOAAStationMetadataClient.swift */; };
 		9A91CC071DA4949CDA75AFDA /* TideLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505127FEEC72884D530167C9 /* TideLiveActivityWidget.swift */; };
 		9AF93676DDE06D9BB6E3ADBF /* WaveFillCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE7F1FC21EDBCFF4B216CE0A /* WaveFillCalculator.swift */; };
 		9F9C4732E4374FC6142F91DA /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5226754C9F0FFE80C8B36A45 /* StoreKitManager.swift */; };
@@ -70,14 +76,18 @@
 		A0DB2C48CB13A1C8B9328E19 /* TideActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88E32129B1996AE5E72AB43 /* TideActivityAttributes.swift */; };
 		A27E2F93FE75942C27C3524E /* WatchTimelineBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D23A269C7CB40A0EDA951A /* WatchTimelineBuilder.swift */; };
 		A2FC890ABE22516F073632EB /* TideActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88E32129B1996AE5E72AB43 /* TideActivityAttributes.swift */; };
+		A5B77E8F9ABB4E5F0780495D /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE8971E51975995598B43C2 /* LocationService.swift */; };
 		A6B9CE330B535D58C14E32C6 /* NOAAResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6707BA4574CC53921ED2A834 /* NOAAResponses.swift */; };
 		A8FBB5D60E62237A7D4E3C4B /* FixtureLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA39C6A35DD08B3FC413C301 /* FixtureLoader.swift */; };
 		AD34CD4838E955A7EDC67078 /* NOAAClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7D93223CDD05107927D299 /* NOAAClientTests.swift */; };
 		B3855B397AD394581DFAC86D /* TideLiveActivityLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DCBC15B0653CB91DD660C3 /* TideLiveActivityLifecycle.swift */; };
 		B97567BA52A62E3B4E54C002 /* TideDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D1F7B123B478B44762C178 /* TideDataTransformer.swift */; };
+		BFD5FD3891BC6B57033B68E7 /* makena_heights.json in Resources */ = {isa = PBXBuildFile; fileRef = AD132998B6B5F309645A6E80 /* makena_heights.json */; };
 		C2BA2136024EB9945BADE9D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 739BA8E070436E02B9F6C616 /* Assets.xcassets */; };
 		C47DF74F3CC62A6C2E49D0E6 /* StationMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B234C0984CB94355837FBC8B /* StationMapView.swift */; };
 		C4B95AC7BDB938B3A69D7B1F /* TideExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AB3F4BC79050FB6D79C0AA /* TideExporter.swift */; };
+		C61D64D3FC1A70084238EE68 /* NOAAStationDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 310208B446BEEC86A8BC046C /* NOAAStationDiscovery.swift */; };
+		C7E179E77DBCF46A2C743DAD /* NOAAStationRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB7C126F7FC3B6491FA3F3A /* NOAAStationRecord.swift */; };
 		C81DF2EEC4DA40B64567FC25 /* TideKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7175CCBDFCEAD645B41D27B3 /* TideKind.swift */; };
 		C8990216EF8E63B20285C300 /* WidgetTimelineBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A125CECFEC53ADA9767FD6 /* WidgetTimelineBuilder.swift */; };
 		CBEACC049D285AEE19A3C5C9 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF616A3CB5FCA9C706E75A99 /* RootView.swift */; };
@@ -95,6 +105,7 @@
 		DC7170F1C0EAAFC670A8415B /* TideLiveActivityBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD733603D9910CEA4F7FA9F8 /* TideLiveActivityBuilder.swift */; };
 		DE4C570F84FE0A166ED02D48 /* Phase3Phase4Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924D2FD3B4741D79E38451C2 /* Phase3Phase4Tests.swift */; };
 		DFF9858D500F0399427BFAEB /* FailingTideFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E77A5B0D0A8834540CB65A /* FailingTideFetcher.swift */; };
+		E0322F28ABD00BB3070E7388 /* makena_hilo.json in Resources */ = {isa = PBXBuildFile; fileRef = E1D33727647C054440149F03 /* makena_hilo.json */; };
 		E1C8DF6198B230F660751D08 /* WidgetTimelineBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A125CECFEC53ADA9767FD6 /* WidgetTimelineBuilder.swift */; };
 		E88263FF3B87916260667F85 /* SkyGradientEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246E14EF8618AA4CCE64B020 /* SkyGradientEngine.swift */; };
 		E8D06DA386AEAE2E1567993C /* FixtureTideFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */; };
@@ -172,6 +183,8 @@
 		246E14EF8618AA4CCE64B020 /* SkyGradientEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyGradientEngine.swift; sourceTree = "<group>"; };
 		2ACDE75FC1A2C142E2E18AAE /* TideHeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideHeight.swift; sourceTree = "<group>"; };
 		2C0550738E3A7B482CECE97A /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		310208B446BEEC86A8BC046C /* NOAAStationDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NOAAStationDiscovery.swift; sourceTree = "<group>"; };
+		32968550F4B0E81FC43325D3 /* NOAAStationMetadataClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NOAAStationMetadataClient.swift; sourceTree = "<group>"; };
 		36759E0F8E240E0C6450E17C /* SwiftDataTideCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataTideCacheTests.swift; sourceTree = "<group>"; };
 		380C77C4E769AA942086F5FC /* LiveActivityCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityCoordinator.swift; sourceTree = "<group>"; };
 		38DEC323044195095B422301 /* SpotsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsStoreTests.swift; sourceTree = "<group>"; };
@@ -212,12 +225,17 @@
 		938CF7B2F4ED56FFD7A78628 /* TideLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideLiveActivity.swift; sourceTree = "<group>"; };
 		9637BCC2FBD33BBD2487BB4F /* EbbFlowTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = EbbFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96CCF071C2F22D01689DCD23 /* TideStatusHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideStatusHUD.swift; sourceTree = "<group>"; };
+		98CBBBB7A5CB93CB692F1A59 /* UserPreferencesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferencesStore.swift; sourceTree = "<group>"; };
+		9AE8971E51975995598B43C2 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		9B59CFAC2BB1EAF159B279D3 /* marina_del_rey_hilo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = marina_del_rey_hilo.json; sourceTree = "<group>"; };
 		9F58063EED13E029E95AEF92 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		9F8E2321F9D46F2A63C78DD9 /* EbbFlowWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EbbFlowWidgets.entitlements; sourceTree = "<group>"; };
 		A2807E8D45B1D6AA70F54709 /* SpotsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsStore.swift; sourceTree = "<group>"; };
 		A39B41EB0C123FB6C6A117E8 /* TideExportPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideExportPresenter.swift; sourceTree = "<group>"; };
 		A3FC702461CC53ED43BC72A4 /* marina_del_rey_heights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = marina_del_rey_heights.json; sourceTree = "<group>"; };
+		A921C43971DEFB8B71157959 /* StationSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSearchView.swift; sourceTree = "<group>"; };
+		AAA531D97E6B8EC86EDB7288 /* StationDiscoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationDiscoveryTests.swift; sourceTree = "<group>"; };
+		AD132998B6B5F309645A6E80 /* makena_heights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = makena_heights.json; sourceTree = "<group>"; };
 		AE8F2CBAD8DD2C53B7C43CBA /* SharedTideDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTideDataStore.swift; sourceTree = "<group>"; };
 		AFFF2BD17A1EABCC8A001023 /* AppModelLoadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelLoadTests.swift; sourceTree = "<group>"; };
 		B234C0984CB94355837FBC8B /* StationMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationMapView.swift; sourceTree = "<group>"; };
@@ -231,15 +249,19 @@
 		C58C48B4D57B0A5D05473814 /* FavoriteSpot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSpot.swift; sourceTree = "<group>"; };
 		C9A3C14D41583D8EE0DD7870 /* MockWorldTidesURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWorldTidesURLProtocol.swift; sourceTree = "<group>"; };
 		CA858A9DAAAB863306BE8E27 /* EbbFlow.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = EbbFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4F4344F8294F842BA8020A8 /* noaa_stations_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = noaa_stations_sample.json; sourceTree = "<group>"; };
 		D505ED0A051ADB6D6F9EF3F2 /* TideExtreme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideExtreme.swift; sourceTree = "<group>"; };
 		D841F4DB45FF238672CF5F72 /* WorldTidesConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTidesConfiguration.swift; sourceTree = "<group>"; };
 		DA39C6A35DD08B3FC413C301 /* FixtureLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureLoader.swift; sourceTree = "<group>"; };
 		DD733603D9910CEA4F7FA9F8 /* TideLiveActivityBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideLiveActivityBuilder.swift; sourceTree = "<group>"; };
 		DE7F1FC21EDBCFF4B216CE0A /* WaveFillCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveFillCalculator.swift; sourceTree = "<group>"; };
+		E1D33727647C054440149F03 /* makena_hilo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = makena_hilo.json; sourceTree = "<group>"; };
 		E1E99D61DB9E40EDF76D74B2 /* marina_del_rey_hilo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = marina_del_rey_hilo.json; sourceTree = "<group>"; };
+		E26F8190BBCD6189626C995D /* TideStationResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideStationResolver.swift; sourceTree = "<group>"; };
 		E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowApp.swift; sourceTree = "<group>"; };
 		E62E161C183B342E0838FC26 /* TideStationCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideStationCatalog.swift; sourceTree = "<group>"; };
 		E76760ADE921646C23F4B665 /* WorldTidesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTidesProvider.swift; sourceTree = "<group>"; };
+		EFB7C126F7FC3B6491FA3F3A /* NOAAStationRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NOAAStationRecord.swift; sourceTree = "<group>"; };
 		F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureTideFetcher.swift; sourceTree = "<group>"; };
 		F413D46832E26A49FF26C832 /* TestDateHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDateHolder.swift; sourceTree = "<group>"; };
 		F4EB55ED0885B0557A088998 /* CatalogTideFallbackProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogTideFallbackProvider.swift; sourceTree = "<group>"; };
@@ -278,6 +300,8 @@
 			isa = PBXGroup;
 			children = (
 				1C4D19FA9E60D09641347C86 /* CompositeTideService.swift */,
+				9AE8971E51975995598B43C2 /* LocationService.swift */,
+				310208B446BEEC86A8BC046C /* NOAAStationDiscovery.swift */,
 				5226754C9F0FFE80C8B36A45 /* StoreKitManager.swift */,
 				40D1F7B123B478B44762C178 /* TideDataTransformer.swift */,
 				6D6D21D2CAF20C4D497BF44D /* TideDateRangeCalculator.swift */,
@@ -286,7 +310,9 @@
 				47E006FE088685BDCFE8A86E /* TideInterpolator.swift */,
 				1AFED0B907E9D28E09B53F64 /* TideSnapshotSharing.swift */,
 				E62E161C183B342E0838FC26 /* TideStationCatalog.swift */,
+				E26F8190BBCD6189626C995D /* TideStationResolver.swift */,
 				0C52916742D4C91C65A2827F /* TideTableBuilder.swift */,
+				98CBBBB7A5CB93CB692F1A59 /* UserPreferencesStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -354,6 +380,14 @@
 			path = EbbFlow;
 			sourceTree = "<group>";
 		};
+		7209616132181D7566ABF5DC /* Stations */ = {
+			isa = PBXGroup;
+			children = (
+				A921C43971DEFB8B71157959 /* StationSearchView.swift */,
+			);
+			path = Stations;
+			sourceTree = "<group>";
+		};
 		775396F3D946B8BE7DB7CA0B /* Journal */ = {
 			isa = PBXGroup;
 			children = (
@@ -376,6 +410,7 @@
 			isa = PBXGroup;
 			children = (
 				6707BA4574CC53921ED2A834 /* NOAAResponses.swift */,
+				EFB7C126F7FC3B6491FA3F3A /* NOAAStationRecord.swift */,
 				D505ED0A051ADB6D6F9EF3F2 /* TideExtreme.swift */,
 				2ACDE75FC1A2C142E2E18AAE /* TideHeight.swift */,
 				7175CCBDFCEAD645B41D27B3 /* TideKind.swift */,
@@ -496,6 +531,7 @@
 				8ECF45095C34693AE1CEBA6F /* Map */,
 				3B48EA867EF7D4C830667FAD /* Settings */,
 				F91D940345843453726FE5EE /* Spots */,
+				7209616132181D7566ABF5DC /* Stations */,
 				8F04CFFEE243A5CC59E84118 /* Today */,
 			);
 			path = Features;
@@ -504,8 +540,11 @@
 		CC8CA62D419B86139802DFCA /* Fixtures */ = {
 			isa = PBXGroup;
 			children = (
+				AD132998B6B5F309645A6E80 /* makena_heights.json */,
+				E1D33727647C054440149F03 /* makena_hilo.json */,
 				A3FC702461CC53ED43BC72A4 /* marina_del_rey_heights.json */,
 				E1E99D61DB9E40EDF76D74B2 /* marina_del_rey_hilo.json */,
+				D4F4344F8294F842BA8020A8 /* noaa_stations_sample.json */,
 			);
 			path = Fixtures;
 			sourceTree = "<group>";
@@ -515,6 +554,7 @@
 			children = (
 				F4EB55ED0885B0557A088998 /* CatalogTideFallbackProvider.swift */,
 				7BE3B912D0817C4BD1DC8ECB /* NOAADataGetterClient.swift */,
+				32968550F4B0E81FC43325D3 /* NOAAStationMetadataClient.swift */,
 				D841F4DB45FF238672CF5F72 /* WorldTidesConfiguration.swift */,
 				E76760ADE921646C23F4B665 /* WorldTidesProvider.swift */,
 			);
@@ -556,6 +596,7 @@
 				924D2FD3B4741D79E38451C2 /* Phase3Phase4Tests.swift */,
 				46A25168C43C13EC411A7F3A /* SkyGradientEngineTests.swift */,
 				38DEC323044195095B422301 /* SpotsStoreTests.swift */,
+				AAA531D97E6B8EC86EDB7288 /* StationDiscoveryTests.swift */,
 				36759E0F8E240E0C6450E17C /* SwiftDataTideCacheTests.swift */,
 				76E9C6789606E81CBCC6AA34 /* TargetWiringTests.swift */,
 				3BD591E7C77CF22554EAE177 /* TideCurveTests.swift */,
@@ -717,8 +758,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFD5FD3891BC6B57033B68E7 /* makena_heights.json in Resources */,
+				E0322F28ABD00BB3070E7388 /* makena_hilo.json in Resources */,
 				1A1870355543E60E3007C91F /* marina_del_rey_heights.json in Resources */,
 				226F60389B804AF7C64B7167 /* marina_del_rey_hilo.json in Resources */,
+				05D40E52A9DD22E770BE04AE /* noaa_stations_sample.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,6 +795,7 @@
 				DE4C570F84FE0A166ED02D48 /* Phase3Phase4Tests.swift in Sources */,
 				1CA6321EDD4033766DF5CA18 /* SkyGradientEngineTests.swift in Sources */,
 				66016398F88294A414D14FE1 /* SpotsStoreTests.swift in Sources */,
+				5D8E3C76704DFD082D97BE3C /* StationDiscoveryTests.swift in Sources */,
 				DB0D2B574812F6124E955484 /* SwiftDataTideCacheTests.swift in Sources */,
 				D0ECD6553E0073E8E58CE356 /* TargetWiringTests.swift in Sources */,
 				41325919946C61B8B52A5894 /* TestDateHolder.swift in Sources */,
@@ -787,10 +832,14 @@
 				1E2B41EB2925EFC30A7DF007 /* JournalStore.swift in Sources */,
 				035D6D3E4291CD68F63542E6 /* JournalView.swift in Sources */,
 				12A4D7208E9BED284C4F6DCC /* LiveActivityCoordinator.swift in Sources */,
+				A5B77E8F9ABB4E5F0780495D /* LocationService.swift in Sources */,
 				D350AB8986682C78C2F1C894 /* LunarSolarEngine.swift in Sources */,
 				50D54841E32D28597A457EF8 /* MoreView.swift in Sources */,
 				6B4D1AD267203F8AD07C0344 /* NOAADataGetterClient.swift in Sources */,
 				A6B9CE330B535D58C14E32C6 /* NOAAResponses.swift in Sources */,
+				C61D64D3FC1A70084238EE68 /* NOAAStationDiscovery.swift in Sources */,
+				98C3B3AA0B79E24316F3C4F0 /* NOAAStationMetadataClient.swift in Sources */,
+				C7E179E77DBCF46A2C743DAD /* NOAAStationRecord.swift in Sources */,
 				CD570453C6B70D1DF8595B83 /* PhotoStorage.swift in Sources */,
 				CBEACC049D285AEE19A3C5C9 /* RootView.swift in Sources */,
 				F97CFC1B34367D009E6B3315 /* SharedTideDataStore.swift in Sources */,
@@ -799,6 +848,7 @@
 				8C123F2CF52007DEFDF2B960 /* SpotsStore.swift in Sources */,
 				923DAB0755730C31049142E0 /* SpotsView.swift in Sources */,
 				C47DF74F3CC62A6C2E49D0E6 /* StationMapView.swift in Sources */,
+				4E94CB9EBA1F7D572906D55E /* StationSearchView.swift in Sources */,
 				9F9C4732E4374FC6142F91DA /* StoreKitManager.swift in Sources */,
 				D11E51957695BF83FA1910C2 /* Theme.swift in Sources */,
 				44B851A967ABBD341F050F6D /* TideActivityAttributes.swift in Sources */,
@@ -821,10 +871,12 @@
 				55A592148AC565BE4D352D32 /* TideSnapshotSharing.swift in Sources */,
 				07CA61ECEB4416F76F3AE225 /* TideStation.swift in Sources */,
 				EE110F36FF9F6726825D3CD0 /* TideStationCatalog.swift in Sources */,
+				302831E2BA9D4E4B1639257B /* TideStationResolver.swift in Sources */,
 				79629D8B0B768D332AEEC93D /* TideStatusHUD.swift in Sources */,
 				1291E7C4988D11B0ECC52E97 /* TideTableBuilder.swift in Sources */,
 				D9F7279C9BAA61EACC8206C0 /* TideTableView.swift in Sources */,
 				77EDC64A452B946802A29D1B /* TodayView.swift in Sources */,
+				5508E68ED11C0760D6D1B633 /* UserPreferencesStore.swift in Sources */,
 				186C89C4800A4C0850843F6E /* WatchTimelineBuilder.swift in Sources */,
 				9AF93676DDE06D9BB6E3ADBF /* WaveFillCalculator.swift in Sources */,
 				C8990216EF8E63B20285C300 /* WidgetTimelineBuilder.swift in Sources */,

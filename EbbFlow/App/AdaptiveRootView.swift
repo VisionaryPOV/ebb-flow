@@ -48,6 +48,7 @@ private struct iPadSplitView: View {
     @State private var spots: [FavoriteSpot] = []
     @State private var selectedFeature: AppFeature = .today
     @State private var selectedStationID: String?
+    @State private var showingStationSearch = false
 
     private var sidebarSpots: [FavoriteSpot] {
         spots.filter { $0.stationID != appModel.selectedStation.id }
@@ -67,13 +68,18 @@ private struct iPadSplitView: View {
                             selectedFeature == feature ? Color.accentColor.opacity(0.12) : Color.clear
                         )
                     }
+                    Button {
+                        showingStationSearch = true
+                    } label: {
+                        Label("Find Station", systemImage: "magnifyingglass")
+                    }
                 }
                 Section("Current") {
                     Button {
                         selectedFeature = .today
                         selectedStationID = appModel.selectedStation.id
                     } label: {
-                        Text(appModel.selectedStation.name)
+                        Text(appModel.displayStationName)
                     }
                     .listRowBackground(
                         selectedFeature == .today && selectedStationID == appModel.selectedStation.id
@@ -107,6 +113,9 @@ private struct iPadSplitView: View {
             .onChange(of: appModel.spotsRevision) { _, _ in
                 reloadSpots()
             }
+            .sheet(isPresented: $showingStationSearch) {
+                StationSearchView(appModel: appModel)
+            }
         } detail: {
             NavigationStack {
                 featureView(selectedFeature)
@@ -122,7 +131,7 @@ private struct iPadSplitView: View {
         case .spots:
             SpotsView(appModel: appModel)
         case .map:
-            StationMapView(station: appModel.selectedStation)
+            StationMapView(appModel: appModel)
         case .journal:
             JournalView(appModel: appModel)
         case .more:
@@ -147,7 +156,7 @@ private struct phoneTabView: View {
                 NavigationStack { SpotsView(appModel: appModel) }
             }
             Tab("Map", systemImage: "map") {
-                NavigationStack { StationMapView(station: appModel.selectedStation) }
+                NavigationStack { StationMapView(appModel: appModel) }
             }
             Tab("Journal", systemImage: "book.closed") {
                 NavigationStack { JournalView(appModel: appModel) }
@@ -159,7 +168,7 @@ private struct phoneTabView: View {
         .tabBarMinimizeBehavior(.onScrollDown)
         .tabViewBottomAccessory {
             TideNowPlayingBar(
-                stationName: appModel.selectedStation.name,
+                stationName: appModel.displayStationName,
                 state: appModel.currentState
             )
         }

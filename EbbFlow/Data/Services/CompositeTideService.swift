@@ -78,8 +78,9 @@ actor CompositeTideService {
             intervalMinutes: 15
         )
 
-        let extremes = try TideDataTransformer.parseExtremes(from: extremesData)
-        let heights = try TideDataTransformer.parseHeights(from: heightsData)
+        let timeZone = TideStationCatalog.timeZone(for: station)
+        let extremes = try TideDataTransformer.parseExtremes(from: extremesData, timeZone: timeZone)
+        let heights = try TideDataTransformer.parseHeights(from: heightsData, timeZone: timeZone)
         let fetchedAt = now()
 
         try await cache.store(

@@ -2,14 +2,15 @@ import MapKit
 import SwiftUI
 
 struct StationMapView: View {
-    let station: TideStation
+    @Bindable var appModel: AppModel
     @State private var region: MKCoordinateRegion
+    @State private var spots: [FavoriteSpot] = []
     @Namespace private var mapControls
 
-    init(station: TideStation) {
-        self.station = station
+    init(appModel: AppModel) {
+        self.appModel = appModel
         _region = State(initialValue: MKCoordinateRegion(
-            center: station.coordinate,
+            center: appModel.selectedStation.coordinate,
             span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)
         ))
     }
@@ -17,11 +18,23 @@ struct StationMapView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Map(position: .constant(.region(region))) {
-                Annotation(station.name, coordinate: station.coordinate) {
-                    Image(systemName: "water.waves")
-                        .padding(8)
-                        .background(.cyan.opacity(0.85), in: Circle())
-                        .foregroundStyle(.white)
+                ForEach(spots, id: \.stationID) { spot in
+                    Annotation(spot.name, coordinate: spot.station.coordinate) {
+                        Button {
+                            Task { await appModel.load(station: spot.station) }
+                        } label: {
+                            Image(systemName: spot.stationID == appModel.selectedStation.id ? "water.waves" : "mappin")
+                                .padding(8)
+                                .background(
+                                    spot.stationID == appModel.selectedStation.id
+                                        ? Color.cyan.opacity(0.85)
+                                        : Color.orange.opacity(0.85),
+                                    in: Circle()
+                                )
+                                .foregroundStyle(.white)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
 
@@ -46,6 +59,46 @@ struct StationMapView: View {
             .padding()
         }
         .navigationTitle("Map")
+        .task { reload() }
+        .onChange(of: appModel.selectedStation.id) { _, _ in
+            centerOnSelection()
+        }
+        .onChange(of: appModel.spotsRevision) { _, _ in
+            reload()
+        }
+    }
+
+    private func reload() {
+        spots = (try? appModel.spotsStore.allSpots()) ?? []
+        if spots.isEmpty {
+            spots = [FavoriteSpot(station: appModel.selectedStation)]
+        }
+        fitRegion()
+    }
+
+    private func centerOnSelection() {
+        region.center = appModel.selectedStation.coordinate
+    }
+
+    private func fitRegion() {
+        let coordinates = spots.map(\.station.coordinate)
+        guard let first = coordinates.first else { return }
+        if coordinates.count == 1 {
+            region.center = first
+            return
+        }
+
+        let latitudes = coordinates.map(\.latitude)
+        let longitudes = coordinates.map(\.longitude)
+        let center = CLLocationCoordinate2D(
+            latitude: (latitudes.min()! + latitudes.max()!) / 2,
+            longitude: (longitudes.min()! + longitudes.max()!) / 2
+        )
+        let span = MKCoordinateSpan(
+            latitudeDelta: max((latitudes.max()! - latitudes.min()!) * 1.4, 0.08),
+            longitudeDelta: max((longitudes.max()! - longitudes.min()!) * 1.4, 0.08)
+        )
+        region = MKCoordinateRegion(center: center, span: span)
     }
 
     private func zoom(by factor: Double) {

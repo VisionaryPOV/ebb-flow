@@ -53,12 +53,16 @@ final class SpotsStore {
 
     func updateSpot(
         stationID: String,
+        name: String? = nil,
         notes: String?,
         photoPath: String?,
         personalOffsetFeet: Double?
     ) throws {
         guard let existing = try spot(stationID: stationID) else {
             throw TideServiceError.cacheMiss
+        }
+        if let name, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            existing.name = name
         }
         if let notes { existing.notes = notes }
         if let photoPath {

@@ -49,13 +49,14 @@ struct NOAADataGetterClient: TidePredictionFetching, Sendable {
         to: Date,
         interval: String
     ) async throws -> Data {
+        let timeZone = TideStationCatalog.timeZone(forStationID: stationID)
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
         components?.queryItems = [
             URLQueryItem(name: "station", value: stationID),
             URLQueryItem(name: "product", value: "predictions"),
             URLQueryItem(name: "datum", value: "MLLW"),
-            URLQueryItem(name: "begin_date", value: Self.queryDate(from)),
-            URLQueryItem(name: "end_date", value: Self.queryDate(to)),
+            URLQueryItem(name: "begin_date", value: Self.queryDate(from, timeZone: timeZone)),
+            URLQueryItem(name: "end_date", value: Self.queryDate(to, timeZone: timeZone)),
             URLQueryItem(name: "interval", value: interval),
             URLQueryItem(name: "time_zone", value: "lst_ldt"),
             URLQueryItem(name: "units", value: "english"),
@@ -74,10 +75,10 @@ struct NOAADataGetterClient: TidePredictionFetching, Sendable {
         return data
     }
 
-    private static func queryDate(_ date: Date) -> String {
+    static func queryDate(_ date: Date, timeZone: TimeZone) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone.current
+        formatter.timeZone = timeZone
         formatter.dateFormat = "yyyyMMdd"
         return formatter.string(from: date)
     }
