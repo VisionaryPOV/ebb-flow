@@ -246,7 +246,6 @@
 		B8459B0ABFA20BA9279F36DD /* PhotoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStorage.swift; sourceTree = "<group>"; };
 		B88E32129B1996AE5E72AB43 /* TideActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideActivityAttributes.swift; sourceTree = "<group>"; };
 		B9E00B28D85BB61A40E0A831 /* RootViewLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewLaunchTests.swift; sourceTree = "<group>"; };
-		BC6EAF04EB72B3E4A27B5FE1 /* EbbFlowTests.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EbbFlowTests.entitlements; sourceTree = "<group>"; };
 		C3A9B7410A1E9C2EE5DD595E /* EbbFlowWatchWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowWatchWidgets.swift; sourceTree = "<group>"; };
 		C3E77A5B0D0A8834540CB65A /* FailingTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailingTideFetcher.swift; sourceTree = "<group>"; };
 		C58C48B4D57B0A5D05473814 /* FavoriteSpot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSpot.swift; sourceTree = "<group>"; };
@@ -595,7 +594,6 @@
 				CC8CA62D419B86139802DFCA /* Fixtures */,
 				9C0A88EE4EDF73A430E62752 /* Support */,
 				AFFF2BD17A1EABCC8A001023 /* AppModelLoadTests.swift */,
-				BC6EAF04EB72B3E4A27B5FE1 /* EbbFlowTests.entitlements */,
 				1E7D93223CDD05107927D299 /* NOAAClientTests.swift */,
 				B4960B05F1B4DCA1B25FB90A /* Phase2Tests.swift */,
 				924D2FD3B4741D79E38451C2 /* Phase3Phase4Tests.swift */,
@@ -948,7 +946,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_ENTITLEMENTS = EbbFlowTests/EbbFlowTests.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -998,7 +995,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_ENTITLEMENTS = EbbFlowTests/EbbFlowTests.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -135,11 +135,6 @@ targets:
     resources:
       - path: EbbFlowTests/Fixtures
         buildPhase: resources
-    entitlements:
-      path: EbbFlowTests/EbbFlowTests.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.com.ebbflow.shared
     dependencies:
       - target: EbbFlow
     settings:
