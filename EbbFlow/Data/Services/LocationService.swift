@@ -27,13 +27,16 @@ protocol LocationProviding: AnyObject {
 @Observable
 final class LocationService: NSObject, LocationProviding {
     private let manager: CLLocationManager
+    private var delegateProxy: LocationManagerDelegateProxy!
     private var continuation: CheckedContinuation<CLLocationCoordinate2D, Error>?
 
     override init() {
         let manager = CLLocationManager()
         self.manager = manager
         super.init()
-        manager.delegate = LocationManagerDelegateProxy(owner: self)
+        let proxy = LocationManagerDelegateProxy(owner: self)
+        delegateProxy = proxy
+        manager.delegate = proxy
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
     }
 
