@@ -66,21 +66,34 @@ actor CompositeTideService {
         let start = calendar.startOfDay(for: referenceDate)
         let end = calendar.date(byAdding: .day, value: loadDays, to: start) ?? start
 
+        let timeZone = TideStationCatalog.timeZone(for: station)
         let extremesData = try await client.fetchExtremes(
             stationID: station.id,
             from: start,
             to: end
         )
-        let heightsData = try await client.fetchHeights(
-            stationID: station.id,
-            from: start,
-            to: end,
-            intervalMinutes: 15
-        )
-
-        let timeZone = TideStationCatalog.timeZone(for: station)
         let extremes = try TideDataTransformer.parseExtremes(from: extremesData, timeZone: timeZone)
-        let heights = try TideDataTransformer.parseHeights(from: heightsData, timeZone: timeZone)
+
+        let heights: [TideHeight]
+        do {
+            let heightsData = try await client.fetchHeights(
+                stationID: station.id,
+                from: start,
+                to: end,
+                intervalMinutes: 15
+            )
+            let parsed = try TideDataTransformer.parseHeights(from: heightsData, timeZone: timeZone)
+            guard !parsed.isEmpty else { throw TideServiceError.parseFailure }
+            heights = parsed
+        } catch {
+            heights = TideInterpolator.cosineHeights(
+                from: extremes,
+                start: start,
+                end: end,
+                step: 15 * 60
+            )
+            guard !heights.isEmpty else { throw error }
+        }
         let fetchedAt = now()
 
         try await cache.store(

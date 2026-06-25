@@ -2,6 +2,18 @@ import Foundation
 import Testing
 @testable import EbbFlow
 
+private struct ExtremesOnlyFixtureFetcher: TidePredictionFetching, Sendable {
+    let extremesData: Data
+
+    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+        extremesData
+    }
+
+    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
+        throw TideServiceError.parseFailure
+    }
+}
+
 struct NOAAClientTests {
     private static let pacific = TimeZone(identifier: "America/Los_Angeles")!
 
@@ -130,6 +142,50 @@ struct NOAAClientTests {
         #expect(state.height > 4.0)
         #expect(state.nextExtreme != nil)
         #expect(state.coversReferenceDate)
+    }
+
+    @Test func validatePredictionsPayloadRejectsNOAAErrorJSON() throws {
+        let errorJSON = Data("""
+        {"error": {"message":"No Predictions data was found. Please make sure the Datum input is valid."}}
+        """.utf8)
+
+        #expect(throws: TideServiceError.parseFailure) {
+            try NOAADataGetterClient.validatePredictionsPayload(errorJSON)
+        }
+    }
+
+    @Test func loadTideDataSynthesizesHeightsWhenSubDailyUnavailable() async throws {
+        let hawaii = TimeZone(identifier: "Pacific/Honolulu")!
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = hawaii
+        let referenceDate = calendar.date(from: DateComponents(year: 2025, month: 6, day: 24, hour: 10))!
+        let makena = TideStation(
+            id: "1615202",
+            name: "Makena",
+            latitude: 20.6567,
+            longitude: -156.445,
+            datum: "MLLW",
+            state: "HI"
+        )
+        let extremesData = try FixtureLoader.data(named: "makena_hilo")
+        let fetcher = ExtremesOnlyFixtureFetcher(extremesData: extremesData)
+        let cache = InMemoryTideCache()
+        let service = CompositeTideService(
+            client: fetcher,
+            cache: cache,
+            calendar: calendar,
+            now: { referenceDate }
+        )
+
+        let snapshot = try await service.loadTideData(for: makena)
+
+        #expect(snapshot.station.id == "1615202")
+        #expect(snapshot.extremes.count == 6)
+        #expect(!snapshot.heights.isEmpty)
+        #expect(snapshot.currentState.coversReferenceDate)
+        let components = calendar.dateComponents([.hour, .minute], from: snapshot.extremes.first!.time)
+        #expect(components.hour == 2)
+        #expect(components.minute == 12)
     }
 
     @Test func currentStateFlagsOutsideDataWindow() throws {

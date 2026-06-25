@@ -8,6 +8,7 @@ struct AppModelLoadTests {
     private static let pacific = TimeZone(identifier: "America/Los_Angeles")!
 
     private func makeContext() throws -> ModelContext {
+        TestIsolation.resetUserDefaultsAndCatalog()
         let schema = Schema([
             FavoriteSpot.self,
             CachedTideExtremeRecord.self,
@@ -51,7 +52,6 @@ struct AppModelLoadTests {
     }
 
     @Test func appModelRetriesAfterTransientCancellation() async throws {
-        TestIsolation.resetUserDefaultsAndCatalog()
         let context = try makeContext()
         let extremesData = try FixtureLoader.data(named: "marina_del_rey_hilo")
         let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
@@ -68,6 +68,7 @@ struct AppModelLoadTests {
         )
         let model = AppModel(
             modelContext: context,
+            selectedStation: .marinaDelRey,
             tideService: service
         )
 
@@ -81,7 +82,6 @@ struct AppModelLoadTests {
     }
 
     @Test func appModelPublishesSharedSnapshotPayloadOnLoad() async throws {
-        TestIsolation.resetUserDefaultsAndCatalog()
         let context = try makeContext()
         let extremesData = try FixtureLoader.data(named: "marina_del_rey_hilo")
         let heightsData = try FixtureLoader.data(named: "marina_del_rey_heights")
@@ -98,6 +98,7 @@ struct AppModelLoadTests {
         )
         let model = AppModel(
             modelContext: context,
+            selectedStation: .marinaDelRey,
             tideService: service
         )
 
@@ -113,6 +114,7 @@ struct AppModelLoadTests {
     }
 
     @Test func isTransientCancellationDetectsCancellationErrors() {
+        TestIsolation.resetUserDefaultsAndCatalog()
         #expect(AppModel.isTransientCancellation(CancellationError()))
         #expect(AppModel.isTransientCancellation(URLError(.cancelled)))
         #expect(AppModel.isTransientCancellation(CancellingFixtureError.cancelled))

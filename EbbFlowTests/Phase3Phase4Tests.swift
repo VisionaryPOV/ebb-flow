@@ -340,6 +340,7 @@ struct Phase3Phase4Tests {
     }
 
     @Test @MainActor func spotsRevisionIncrementsWhenSpotUpdated() throws {
+        TestIsolation.resetUserDefaultsAndCatalog()
         let schema = Schema([FavoriteSpot.self])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: schema, configurations: [configuration])

@@ -72,7 +72,20 @@ struct NOAADataGetterClient: TidePredictionFetching, Sendable {
         guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
             throw TideServiceError.networkFailure
         }
+        try Self.validatePredictionsPayload(data)
         return data
+    }
+
+    static func validatePredictionsPayload(_ data: Data) throws {
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw TideServiceError.parseFailure
+        }
+        if json["error"] != nil {
+            throw TideServiceError.parseFailure
+        }
+        guard let predictions = json["predictions"] as? [Any], !predictions.isEmpty else {
+            throw TideServiceError.parseFailure
+        }
     }
 
     static func queryDate(_ date: Date, timeZone: TimeZone) -> String {
