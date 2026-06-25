@@ -28,7 +28,7 @@ struct TideTableView: View {
                         Label(kind.label, systemImage: kind == .high ? "arrow.up" : "arrow.down")
                     }
                     if appModel.tableColumns.contains(.time) {
-                        Text(formattedTime(row.time))
+                        Text(TideDataTransformer.formatShortTime(row.time, timeZone: appModel.exportTimeZone))
                     }
                     Spacer()
                     if appModel.tableColumns.contains(.height) {
@@ -46,10 +46,4 @@ struct TideTableView: View {
         }
     }
 
-    private func formattedTime(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
 }

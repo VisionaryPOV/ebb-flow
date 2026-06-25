@@ -3,6 +3,7 @@ import SwiftUI
 struct TideNowPlayingBar: View {
     let stationName: String
     let state: TideCurrentState
+    let timeZone: TimeZone
 
     var body: some View {
         HStack(spacing: 12) {
@@ -30,9 +31,8 @@ struct TideNowPlayingBar: View {
     private var statusLine: String {
         let direction = state.isRising ? "Rising" : "Falling"
         if let next = state.nextExtreme {
-            let formatter = DateFormatter()
-            formatter.timeStyle = .short
-            return "\(direction) · \(next.kind.label) at \(formatter.string(from: next.time))"
+            let time = TideDataTransformer.formatShortTime(next.time, timeZone: timeZone)
+            return "\(direction) · \(next.kind.label) at \(time)"
         }
         return direction
     }

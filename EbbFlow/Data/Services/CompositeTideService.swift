@@ -41,6 +41,9 @@ actor CompositeTideService {
     ) async throws -> TideSnapshot {
         let referenceDate = now()
         let loadDays = max(days, 2)
+        let timeZone = TideStationCatalog.timeZone(for: station)
+        var stationCalendar = calendar
+        stationCalendar.timeZone = timeZone
 
         if !forceRefresh,
            let cachedExtremes = await cache.cachedExtremes(stationID: station.id),
@@ -52,7 +55,8 @@ actor CompositeTideService {
                heights: cachedHeights,
                fetchedAt: fetchedAt,
                referenceDate: referenceDate,
-               requiredDays: loadDays
+               requiredDays: loadDays,
+               calendar: stationCalendar
            ) {
             return TideSnapshot(
                 station: station,
@@ -63,14 +67,14 @@ actor CompositeTideService {
             )
         }
 
-        let start = calendar.startOfDay(for: referenceDate)
-        let end = calendar.date(byAdding: .day, value: loadDays, to: start) ?? start
+        let start = stationCalendar.startOfDay(for: referenceDate)
+        let end = stationCalendar.date(byAdding: .day, value: loadDays, to: start) ?? start
 
-        let timeZone = TideStationCatalog.timeZone(for: station)
         let extremesData = try await client.fetchExtremes(
             stationID: station.id,
             from: start,
-            to: end
+            to: end,
+            timeZone: timeZone
         )
         let extremes = try TideDataTransformer.parseExtremes(from: extremesData, timeZone: timeZone)
 
@@ -80,7 +84,8 @@ actor CompositeTideService {
                 stationID: station.id,
                 from: start,
                 to: end,
-                intervalMinutes: 15
+                intervalMinutes: 15,
+                timeZone: timeZone
             )
             let parsed = try TideDataTransformer.parseHeights(from: heightsData, timeZone: timeZone)
             guard !parsed.isEmpty else { throw TideServiceError.parseFailure }
@@ -116,14 +121,16 @@ actor CompositeTideService {
         heights: [TideHeight],
         fetchedAt: Date,
         referenceDate: Date,
-        requiredDays: Int = 2
+        requiredDays: Int = 2,
+        calendar: Calendar? = nil
     ) -> Bool {
         guard referenceDate.timeIntervalSince(fetchedAt) < Self.cacheTTL else {
             return false
         }
 
-        let windowStart = calendar.startOfDay(for: referenceDate)
-        let windowEnd = calendar.date(byAdding: .day, value: requiredDays, to: windowStart) ?? windowStart
+        let rangeCalendar = calendar ?? self.calendar
+        let windowStart = rangeCalendar.startOfDay(for: referenceDate)
+        let windowEnd = rangeCalendar.date(byAdding: .day, value: requiredDays, to: windowStart) ?? windowStart
         guard let dataStart = heights.map(\.time).min(),
               let dataEnd = heights.map(\.time).max() else {
             return false

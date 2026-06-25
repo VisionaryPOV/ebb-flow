@@ -193,7 +193,8 @@ struct Phase3Phase4Tests {
             stationID: "9410840",
             from: from,
             to: to,
-            intervalMinutes: 15
+            intervalMinutes: 15,
+            timeZone: Self.pacific
         )
 
         let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
@@ -216,7 +217,8 @@ struct Phase3Phase4Tests {
             stationID: "9410840",
             from: from,
             to: to,
-            intervalMinutes: 15
+            intervalMinutes: 15,
+            timeZone: Self.pacific
         )
 
         let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
@@ -240,7 +242,8 @@ struct Phase3Phase4Tests {
             stationID: "33.9767,-118.4567",
             from: Date(),
             to: Date().addingTimeInterval(3600),
-            intervalMinutes: 15
+            intervalMinutes: 15,
+            timeZone: Self.pacific
         )
         let heights = try TideDataTransformer.parseHeights(from: data, timeZone: Self.pacific)
         #expect(heights.count == 1)

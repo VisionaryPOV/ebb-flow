@@ -18,7 +18,7 @@ actor CancellingOnceFixtureFetcher: TidePredictionFetching {
         self.heightsData = heightsData
     }
 
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
         fetchAttempts += 1
         if !didCancelOnce {
             didCancelOnce = true
@@ -27,7 +27,13 @@ actor CancellingOnceFixtureFetcher: TidePredictionFetching {
         return extremesData
     }
 
-    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
+    func fetchHeights(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int,
+        timeZone: TimeZone
+    ) async throws -> Data {
         return heightsData
     }
 }

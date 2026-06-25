@@ -5,11 +5,17 @@ import Testing
 private struct ExtremesOnlyFixtureFetcher: TidePredictionFetching, Sendable {
     let extremesData: Data
 
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
         extremesData
     }
 
-    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
+    func fetchHeights(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int,
+        timeZone: TimeZone
+    ) async throws -> Data {
         throw TideServiceError.parseFailure
     }
 }
@@ -142,6 +148,18 @@ struct NOAAClientTests {
         #expect(state.height > 4.0)
         #expect(state.nextExtreme != nil)
         #expect(state.coversReferenceDate)
+    }
+
+    @Test func formatShortTimeUsesStationTimezoneNotDevice() throws {
+        let hawaii = TimeZone(identifier: "Pacific/Honolulu")!
+        let data = try FixtureLoader.data(named: "makena_hilo")
+        let extremes = try TideDataTransformer.parseExtremes(from: data, timeZone: hawaii)
+        let first = try #require(extremes.first)
+
+        let hawaiiLabel = TideDataTransformer.formatShortTime(first.time, timeZone: hawaii)
+        let pacificLabel = TideDataTransformer.formatShortTime(first.time, timeZone: Self.pacific)
+        #expect(hawaiiLabel != pacificLabel)
+        #expect(hawaiiLabel.contains("2"))
     }
 
     @Test func validatePredictionsPayloadRejectsNOAAErrorJSON() throws {

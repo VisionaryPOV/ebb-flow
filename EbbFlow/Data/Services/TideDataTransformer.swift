@@ -12,6 +12,15 @@ enum TideDataTransformer {
         return formatter
     }
 
+    static func formatShortTime(_ date: Date, timeZone: TimeZone) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = timeZone
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+
     static func parseExtremes(
         from data: Data,
         timeZone: TimeZone = noaaLocalTimeZone

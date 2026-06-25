@@ -1,8 +1,14 @@
 import Foundation
 
 protocol TidePredictionFetching: Sendable {
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data
-    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data
+    func fetchHeights(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int,
+        timeZone: TimeZone
+    ) async throws -> Data
 }
 
 struct NOAADataGetterClient: TidePredictionFetching, Sendable {
@@ -20,12 +26,13 @@ struct NOAADataGetterClient: TidePredictionFetching, Sendable {
         self.applicationName = applicationName
     }
 
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
         try await fetch(
             stationID: stationID,
             from: from,
             to: to,
-            interval: "hilo"
+            interval: "hilo",
+            timeZone: timeZone
         )
     }
 
@@ -33,13 +40,15 @@ struct NOAADataGetterClient: TidePredictionFetching, Sendable {
         stationID: String,
         from: Date,
         to: Date,
-        intervalMinutes: Int = 15
+        intervalMinutes: Int = 15,
+        timeZone: TimeZone
     ) async throws -> Data {
         try await fetch(
             stationID: stationID,
             from: from,
             to: to,
-            interval: String(intervalMinutes)
+            interval: String(intervalMinutes),
+            timeZone: timeZone
         )
     }
 
@@ -47,9 +56,9 @@ struct NOAADataGetterClient: TidePredictionFetching, Sendable {
         stationID: String,
         from: Date,
         to: Date,
-        interval: String
+        interval: String,
+        timeZone: TimeZone
     ) async throws -> Data {
-        let timeZone = TideStationCatalog.timeZone(forStationID: stationID)
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
         components?.queryItems = [
             URLQueryItem(name: "station", value: stationID),

@@ -186,8 +186,18 @@ final class AppModel {
         }
     }
 
+    var stationCalendar: Calendar {
+        var calendar = Calendar.current
+        calendar.timeZone = exportTimeZone
+        return calendar
+    }
+
     var chartRange: ClosedRange<Date> {
-        TideDateRangeCalculator.range(for: chartScale, containing: selectedChartDate)
+        TideDateRangeCalculator.range(
+            for: chartScale,
+            containing: selectedChartDate,
+            calendar: stationCalendar
+        )
     }
 
     var personalOffsetFeet: Double {

@@ -83,7 +83,7 @@ struct TodayView: View {
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.7))
             }
-            TideStatusHUD(state: appModel.currentState)
+            TideStatusHUD(state: appModel.currentState, timeZone: appModel.exportTimeZone)
         }
     }
 
@@ -139,7 +139,7 @@ struct TodayView: View {
                 Text("Sky & Energy")
                     .font(.headline)
                     .foregroundStyle(.white)
-                Text("\(phase.label) · Sunrise \(formattedTime(solar.sunrise)) · Sunset \(formattedTime(solar.sunset))")
+                Text("\(phase.label) · Sunrise \(TideDataTransformer.formatShortTime(solar.sunrise, timeZone: appModel.exportTimeZone)) · Sunset \(TideDataTransformer.formatShortTime(solar.sunset, timeZone: appModel.exportTimeZone))")
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.85))
                 if let top = windows.first {
@@ -160,13 +160,6 @@ struct TodayView: View {
             startPoint: .top,
             endPoint: .bottom
         )
-    }
-
-    private func formattedTime(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
     }
 
     private func presentExport(_ kind: TideExportKind) {

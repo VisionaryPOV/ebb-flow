@@ -7,11 +7,17 @@ struct CatalogTideFallbackProvider: TidePredictionFetching, Sendable {
         self.loader = loader
     }
 
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
         try await fetchFixture(stationID: stationID, resource: extremesResource)
     }
 
-    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
+    func fetchHeights(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int,
+        timeZone: TimeZone
+    ) async throws -> Data {
         try await fetchFixture(stationID: stationID, resource: heightsResource)
     }
 

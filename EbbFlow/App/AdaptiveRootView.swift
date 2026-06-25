@@ -169,7 +169,8 @@ private struct phoneTabView: View {
         .tabViewBottomAccessory {
             TideNowPlayingBar(
                 stationName: appModel.displayStationName,
-                state: appModel.currentState
+                state: appModel.currentState,
+                timeZone: appModel.exportTimeZone
             )
         }
     }

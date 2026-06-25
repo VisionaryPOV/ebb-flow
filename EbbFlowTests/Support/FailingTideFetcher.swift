@@ -8,11 +8,17 @@ struct FailingTideFetcher: TidePredictionFetching, Sendable {
         self.error = error
     }
 
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
         throw error
     }
 
-    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
+    func fetchHeights(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int,
+        timeZone: TimeZone
+    ) async throws -> Data {
         throw error
     }
 }
@@ -20,18 +26,27 @@ struct FailingTideFetcher: TidePredictionFetching, Sendable {
 actor RecordingTideFetcher: TidePredictionFetching {
     let response: Data
     private(set) var receivedStationIDs: [String] = []
+    private(set) var receivedTimeZones: [TimeZone] = []
 
     init(response: Data) {
         self.response = response
     }
 
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
         receivedStationIDs.append(stationID)
+        receivedTimeZones.append(timeZone)
         return response
     }
 
-    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
+    func fetchHeights(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int,
+        timeZone: TimeZone
+    ) async throws -> Data {
         receivedStationIDs.append(stationID)
+        receivedTimeZones.append(timeZone)
         return response
     }
 }

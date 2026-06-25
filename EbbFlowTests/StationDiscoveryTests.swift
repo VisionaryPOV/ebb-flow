@@ -182,6 +182,73 @@ struct StationDiscoveryTests {
     }
 
     @MainActor
+    @Test func secondaryFavoriteLoadUsesHawaiiTimezoneAfterColdStart() async throws {
+        TestIsolation.resetUserDefaultsAndCatalog()
+        TideStationCatalog.clearRegistryForTesting()
+        UserPreferencesStore.saveLastStation(.marinaDelRey)
+
+        let makena = TideStation(
+            id: "1615202",
+            name: "Makena",
+            latitude: 20.6567,
+            longitude: -156.445,
+            datum: "MLLW",
+            state: "HI"
+        )
+
+        let extremesData = try FixtureLoader.data(named: "makena_hilo")
+        let heightsData = try FixtureLoader.data(named: "makena_heights")
+        let tideFetcher = FixtureTideFetcher(extremesData: extremesData, heightsData: heightsData)
+
+        var pacificCalendar = Calendar(identifier: .gregorian)
+        pacificCalendar.timeZone = Self.pacific
+        let referenceDate = pacificCalendar.date(from: DateComponents(year: 2025, month: 6, day: 24, hour: 10))!
+        let context = try makeContext()
+        let cache = SwiftDataTideCache(modelContext: context)
+        let service = CompositeTideService(
+            client: tideFetcher,
+            cache: cache,
+            calendar: pacificCalendar,
+            now: { referenceDate }
+        )
+        let metadata = FixtureNOAAStationFetcher(stations: [])
+        let model = AppModel(
+            modelContext: context,
+            tideService: service,
+            stationMetadata: metadata
+        )
+
+        try model.spotsStore.addSpot(for: makena)
+
+        #expect(model.selectedStation.id == "9410840")
+        #expect(TideStationCatalog.timeZone(for: model.selectedStation).identifier == Self.pacific.identifier)
+
+        await model.load(station: makena)
+
+        #expect(model.selectedStation.id == "1615202")
+        #expect(model.exportTimeZone.identifier == Self.hawaii.identifier)
+        #expect(model.stationCalendar.timeZone.identifier == Self.hawaii.identifier)
+
+        let received = await tideFetcher.receivedTimeZones
+        #expect(!received.isEmpty)
+        #expect(received.allSatisfy { $0.identifier == Self.hawaii.identifier })
+
+        let firstExtreme = try #require(model.snapshot?.extremes.first)
+        var hawaiiCalendar = Calendar(identifier: .gregorian)
+        hawaiiCalendar.timeZone = Self.hawaii
+        let components = hawaiiCalendar.dateComponents([.hour, .minute], from: firstExtreme.time)
+        #expect(components.hour == 2)
+        #expect(components.minute == 12)
+
+        let hawaiiLabel = TideDataTransformer.formatShortTime(firstExtreme.time, timeZone: model.exportTimeZone)
+        let pacificLabel = TideDataTransformer.formatShortTime(firstExtreme.time, timeZone: Self.pacific)
+        #expect(hawaiiLabel != pacificLabel)
+        #expect(hawaiiLabel.contains("2"))
+
+        TestIsolation.resetUserDefaultsAndCatalog()
+    }
+
+    @MainActor
     @Test func renameFavoriteUpdatesDisplayName() throws {
         let context = try makeContext()
         let store = SpotsStore(modelContext: context)

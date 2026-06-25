@@ -36,11 +36,17 @@ struct WorldTidesProvider: TidePredictionFetching, Sendable {
         !apiKey.isEmpty
     }
 
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
         try await fetchJSON(stationID: stationID, from: from, to: to, includeExtremes: true, includeHeights: false)
     }
 
-    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
+    func fetchHeights(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int,
+        timeZone: TimeZone
+    ) async throws -> Data {
         try await fetchJSON(stationID: stationID, from: from, to: to, includeExtremes: false, includeHeights: true)
     }
 
@@ -129,12 +135,12 @@ struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
         self.catalogFallback = catalogFallback
     }
 
-    func fetchExtremes(stationID: String, from: Date, to: Date) async throws -> Data {
+    func fetchExtremes(stationID: String, from: Date, to: Date, timeZone: TimeZone) async throws -> Data {
         if stationID.contains(",") {
-            return try await worldTides.fetchExtremes(stationID: stationID, from: from, to: to)
+            return try await worldTides.fetchExtremes(stationID: stationID, from: from, to: to, timeZone: timeZone)
         }
         do {
-            return try await noaa.fetchExtremes(stationID: stationID, from: from, to: to)
+            return try await noaa.fetchExtremes(stationID: stationID, from: from, to: to, timeZone: timeZone)
         } catch {
             return try await fetchWorldTidesFallback(
                 stationID: stationID,
@@ -142,18 +148,26 @@ struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
                 to: to,
                 intervalMinutes: nil,
                 includeExtremes: true,
+                timeZone: timeZone,
                 originalError: error
             )
         }
     }
 
-    func fetchHeights(stationID: String, from: Date, to: Date, intervalMinutes: Int) async throws -> Data {
+    func fetchHeights(
+        stationID: String,
+        from: Date,
+        to: Date,
+        intervalMinutes: Int,
+        timeZone: TimeZone
+    ) async throws -> Data {
         if stationID.contains(",") {
             return try await worldTides.fetchHeights(
                 stationID: stationID,
                 from: from,
                 to: to,
-                intervalMinutes: intervalMinutes
+                intervalMinutes: intervalMinutes,
+                timeZone: timeZone
             )
         }
         do {
@@ -161,7 +175,8 @@ struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
                 stationID: stationID,
                 from: from,
                 to: to,
-                intervalMinutes: intervalMinutes
+                intervalMinutes: intervalMinutes,
+                timeZone: timeZone
             )
         } catch {
             return try await fetchWorldTidesFallback(
@@ -170,6 +185,7 @@ struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
                 to: to,
                 intervalMinutes: intervalMinutes,
                 includeExtremes: false,
+                timeZone: timeZone,
                 originalError: error
             )
         }
@@ -181,6 +197,7 @@ struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
         to: Date,
         intervalMinutes: Int?,
         includeExtremes: Bool,
+        timeZone: TimeZone,
         originalError: Error
     ) async throws -> Data {
         guard let station = TideStationCatalog.resolve(id: stationID) else {
@@ -190,23 +207,35 @@ struct CompositeTideProviderRouter: TidePredictionFetching, Sendable {
         let coordinateKey = TideStationCatalog.coordinateKey(for: station)
         do {
             if includeExtremes {
-                return try await worldTides.fetchExtremes(stationID: coordinateKey, from: from, to: to)
+                return try await worldTides.fetchExtremes(
+                    stationID: coordinateKey,
+                    from: from,
+                    to: to,
+                    timeZone: timeZone
+                )
             }
             return try await worldTides.fetchHeights(
                 stationID: coordinateKey,
                 from: from,
                 to: to,
-                intervalMinutes: intervalMinutes ?? 15
+                intervalMinutes: intervalMinutes ?? 15,
+                timeZone: timeZone
             )
         } catch {
             if includeExtremes {
-                return try await catalogFallback.fetchExtremes(stationID: stationID, from: from, to: to)
+                return try await catalogFallback.fetchExtremes(
+                    stationID: stationID,
+                    from: from,
+                    to: to,
+                    timeZone: timeZone
+                )
             }
             return try await catalogFallback.fetchHeights(
                 stationID: stationID,
                 from: from,
                 to: to,
-                intervalMinutes: intervalMinutes ?? 15
+                intervalMinutes: intervalMinutes ?? 15,
+                timeZone: timeZone
             )
         }
     }

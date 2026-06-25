@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TideStatusHUD: View {
     let state: TideCurrentState
+    let timeZone: TimeZone
     @Namespace private var glassNamespace
     @State private var expanded = false
 
@@ -12,7 +13,7 @@ struct TideStatusHUD: View {
                     Text(state.isRising ? "Rising" : "Falling gently")
                         .font(.headline)
                     if let next = state.nextExtreme {
-                        Text("\(next.kind.label) at \(formattedTime(next.time))")
+                        Text("\(next.kind.label) at \(TideDataTransformer.formatShortTime(next.time, timeZone: timeZone))")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -41,9 +42,4 @@ struct TideStatusHUD: View {
         }
     }
 
-    private func formattedTime(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
 }

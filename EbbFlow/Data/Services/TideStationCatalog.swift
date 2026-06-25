@@ -39,19 +39,6 @@ enum TideStationCatalog {
         return timeZone(forState: station.state)
     }
 
-    static func timeZone(forStationID id: String) -> TimeZone {
-        if let record = registry[id] ?? knownRecord(for: id) {
-            return NOAAStationDiscovery.timeZone(for: record)
-        }
-        if let persisted = UserPreferencesStore.lastStation(), persisted.id == id {
-            return timeZone(forState: persisted.state)
-        }
-        if id == TideStation.marinaDelRey.id {
-            return timeZone(forState: "CA")
-        }
-        return timeZone(forState: "CA")
-    }
-
     static func timeZone(forState state: String) -> TimeZone {
         if let identifier = NOAAStationDiscovery.timeZoneIdentifier(for: state),
            let timeZone = TimeZone(identifier: identifier) {
