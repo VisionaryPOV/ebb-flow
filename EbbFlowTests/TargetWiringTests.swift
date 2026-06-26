@@ -116,4 +116,19 @@ struct TargetWiringTests {
             )
         }
     }
+
+    @Test func watchTargetDeclaresAppIconAssetCatalog() {
+        let yaml = Self.projectYAML
+        let watchBlock = Self.targetBlock(named: "EbbFlowWatch", in: yaml) ?? ""
+        #expect(watchBlock.contains("EbbFlowWatch/Assets.xcassets"))
+        #expect(watchBlock.contains("ASSETCATALOG_COMPILER_APPICON_NAME"))
+        #expect(watchBlock.contains("INFOPLIST_KEY_CFBundleIconName"))
+    }
+
+    @Test func watchWidgetsExtensionUsesExplicitInfoPlist() {
+        let yaml = Self.projectYAML
+        let block = Self.targetBlock(named: "EbbFlowWatchWidgets", in: yaml) ?? ""
+        #expect(block.contains("EbbFlowWatchWidgets/Info.plist"))
+        #expect(block.contains("NSExtensionPointIdentifier"))
+    }
 }

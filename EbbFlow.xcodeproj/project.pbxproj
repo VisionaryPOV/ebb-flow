@@ -84,6 +84,7 @@
 		A5B77E8F9ABB4E5F0780495D /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE8971E51975995598B43C2 /* LocationService.swift */; };
 		A6B9CE330B535D58C14E32C6 /* NOAAResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6707BA4574CC53921ED2A834 /* NOAAResponses.swift */; };
 		A8FBB5D60E62237A7D4E3C4B /* FixtureLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA39C6A35DD08B3FC413C301 /* FixtureLoader.swift */; };
+		A90F892CAC2C41B9F293565C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D9A6AF0DEFA1E5C824EA82B /* Assets.xcassets */; };
 		AD34CD4838E955A7EDC67078 /* NOAAClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7D93223CDD05107927D299 /* NOAAClientTests.swift */; };
 		B3855B397AD394581DFAC86D /* TideLiveActivityLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DCBC15B0653CB91DD660C3 /* TideLiveActivityLifecycle.swift */; };
 		B97567BA52A62E3B4E54C002 /* TideDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D1F7B123B478B44762C178 /* TideDataTransformer.swift */; };
@@ -215,12 +216,12 @@
 		38DEC323044195095B422301 /* SpotsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotsStoreTests.swift; sourceTree = "<group>"; };
 		3BD591E7C77CF22554EAE177 /* TideCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideCurveTests.swift; sourceTree = "<group>"; };
 		40D1F7B123B478B44762C178 /* TideDataTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideDataTransformer.swift; sourceTree = "<group>"; };
-		44FCAE45F7B37888B004668E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		44FCAE45F7B37888B004668E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		46A25168C43C13EC411A7F3A /* SkyGradientEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyGradientEngineTests.swift; sourceTree = "<group>"; };
 		47E006FE088685BDCFE8A86E /* TideInterpolator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideInterpolator.swift; sourceTree = "<group>"; };
 		49624320BA713B7EA1045132 /* TideNowPlayingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideNowPlayingBar.swift; sourceTree = "<group>"; };
 		49A125CECFEC53ADA9767FD6 /* WidgetTimelineBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetTimelineBuilder.swift; sourceTree = "<group>"; };
-		4AB0470AFC7149C4E3A94861 /* EbbFlowWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = EbbFlowWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AB0470AFC7149C4E3A94861 /* EbbFlowWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = EbbFlowWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D4E3180D877A5CC8FC42782 /* AccessibilityHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityHelpers.swift; sourceTree = "<group>"; };
 		505127FEEC72884D530167C9 /* TideLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideLiveActivityWidget.swift; sourceTree = "<group>"; };
 		50E4201269B63F00B7016C4E /* LunarSolarEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunarSolarEngine.swift; sourceTree = "<group>"; };
@@ -242,14 +243,16 @@
 		793C79F8EAE7997966701559 /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
 		7BE3B912D0817C4BD1DC8ECB /* NOAADataGetterClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NOAADataGetterClient.swift; sourceTree = "<group>"; };
 		7CEB653052A40AC61A0AA2FC /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
+		7D9A6AF0DEFA1E5C824EA82B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7FAD5DD8DB0F445FD0EBF40A /* EbbFlowWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowWidgets.swift; sourceTree = "<group>"; };
 		8320455FA65B1D49AC87F430 /* TideCacheRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideCacheRepository.swift; sourceTree = "<group>"; };
 		8A201BABDF146CC0A631C162 /* TideCurveChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideCurveChart.swift; sourceTree = "<group>"; };
 		8BA3D1E7A207E9B5CD2E6015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		90EA67620E12C5B25F3D697E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		91DC0699A853647025D07B08 /* JournalEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalEntry.swift; sourceTree = "<group>"; };
 		924D2FD3B4741D79E38451C2 /* Phase3Phase4Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phase3Phase4Tests.swift; sourceTree = "<group>"; };
 		938CF7B2F4ED56FFD7A78628 /* TideLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideLiveActivity.swift; sourceTree = "<group>"; };
-		9637BCC2FBD33BBD2487BB4F /* EbbFlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EbbFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9637BCC2FBD33BBD2487BB4F /* EbbFlowTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = EbbFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96CCF071C2F22D01689DCD23 /* TideStatusHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideStatusHUD.swift; sourceTree = "<group>"; };
 		98CBBBB7A5CB93CB692F1A59 /* UserPreferencesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferencesStore.swift; sourceTree = "<group>"; };
 		9AE8971E51975995598B43C2 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
@@ -270,13 +273,13 @@
 		B8459B0ABFA20BA9279F36DD /* PhotoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStorage.swift; sourceTree = "<group>"; };
 		B88E32129B1996AE5E72AB43 /* TideActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideActivityAttributes.swift; sourceTree = "<group>"; };
 		B9E00B28D85BB61A40E0A831 /* RootViewLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewLaunchTests.swift; sourceTree = "<group>"; };
-		C01B8B779F188D4B3C902CCB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		C10B9F12722F6D92C462EEFD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C01B8B779F188D4B3C902CCB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C10B9F12722F6D92C462EEFD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C3A9B7410A1E9C2EE5DD595E /* EbbFlowWatchWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowWatchWidgets.swift; sourceTree = "<group>"; };
 		C3E77A5B0D0A8834540CB65A /* FailingTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailingTideFetcher.swift; sourceTree = "<group>"; };
 		C58C48B4D57B0A5D05473814 /* FavoriteSpot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSpot.swift; sourceTree = "<group>"; };
 		C9A3C14D41583D8EE0DD7870 /* MockWorldTidesURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWorldTidesURLProtocol.swift; sourceTree = "<group>"; };
-		CA858A9DAAAB863306BE8E27 /* EbbFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EbbFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA858A9DAAAB863306BE8E27 /* EbbFlow.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = EbbFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4F4344F8294F842BA8020A8 /* noaa_stations_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = noaa_stations_sample.json; sourceTree = "<group>"; };
 		D505ED0A051ADB6D6F9EF3F2 /* TideExtreme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideExtreme.swift; sourceTree = "<group>"; };
 		D841F4DB45FF238672CF5F72 /* WorldTidesConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTidesConfiguration.swift; sourceTree = "<group>"; };
@@ -289,7 +292,7 @@
 		E4A62FC361D7A92CF32FFEED /* EbbFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbbFlowApp.swift; sourceTree = "<group>"; };
 		E62E161C183B342E0838FC26 /* TideStationCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TideStationCatalog.swift; sourceTree = "<group>"; };
 		E76760ADE921646C23F4B665 /* WorldTidesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTidesProvider.swift; sourceTree = "<group>"; };
-		E82E9BF25A4E1FAC05138BF4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E82E9BF25A4E1FAC05138BF4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EBBAAAF3894B8DA64FB9BF6E /* TestIsolation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestIsolation.swift; sourceTree = "<group>"; };
 		EFB7C126F7FC3B6491FA3F3A /* NOAAStationRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NOAAStationRecord.swift; sourceTree = "<group>"; };
 		F2D251CA035DCC728E7EB914 /* FixtureTideFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureTideFetcher.swift; sourceTree = "<group>"; };
@@ -350,6 +353,7 @@
 		22CE9A2629961A7F149D0F6E /* EbbFlowWatch */ = {
 			isa = PBXGroup;
 			children = (
+				7D9A6AF0DEFA1E5C824EA82B /* Assets.xcassets */,
 				60E4E045FEA268E30C093FCB /* EbbFlowWatch.entitlements */,
 				72678C5D62A4454DC582923C /* EbbFlowWatch.swift */,
 				44FCAE45F7B37888B004668E /* PrivacyInfo.xcprivacy */,
@@ -541,6 +545,7 @@
 			children = (
 				F6D6A554F56E3D337D1A93C9 /* EbbFlowWatchWidgets.entitlements */,
 				C3A9B7410A1E9C2EE5DD595E /* EbbFlowWatchWidgets.swift */,
+				90EA67620E12C5B25F3D697E /* Info.plist */,
 				C10B9F12722F6D92C462EEFD /* PrivacyInfo.xcprivacy */,
 			);
 			path = EbbFlowWatchWidgets;
@@ -746,7 +751,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2700;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					092138AD2C2AAD12A82114E8 = {
 						DevelopmentTeam = 3VSNQ93JZN;
@@ -826,6 +831,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A90F892CAC2C41B9F293565C /* Assets.xcassets in Resources */,
 				219239C91B3D86E2DB63281E /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1032,7 +1038,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EbbFlow/EbbFlow.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Ebb & Flow";
@@ -1110,12 +1116,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 3VSNQ93JZN;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1128,7 +1132,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -1143,6 +1146,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EbbFlowWatch/EbbFlowWatch.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_WKApplication = YES;
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ebbflow.app;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebbflow.app.watch;
@@ -1158,8 +1162,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = EbbFlowWatchWidgets/EbbFlowWatchWidgets.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ebb & Flow Complications";
-				INFOPLIST_KEY_NSExtension = "{NSExtensionPointIdentifier: com.apple.widgetkit-extension}";
+				INFOPLIST_FILE = EbbFlowWatchWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1180,7 +1183,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EbbFlow/EbbFlow.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Ebb & Flow";
@@ -1209,7 +1212,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = EbbFlowWidgets/EbbFlowWidgets.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EbbFlowWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -1232,8 +1235,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = EbbFlowWatchWidgets/EbbFlowWatchWidgets.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ebb & Flow Complications";
-				INFOPLIST_KEY_NSExtension = "{NSExtensionPointIdentifier: com.apple.widgetkit-extension}";
+				INFOPLIST_FILE = EbbFlowWatchWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1252,7 +1254,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = EbbFlowWidgets/EbbFlowWidgets.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EbbFlowWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -1305,12 +1307,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 3VSNQ93JZN;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1330,7 +1330,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -1345,6 +1344,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EbbFlowWatch/EbbFlowWatch.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_WKApplication = YES;
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ebbflow.app;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebbflow.app.watch;

@@ -44,7 +44,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app
         PRODUCT_NAME: EbbFlow
         MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: "1"
+        CURRENT_PROJECT_VERSION: "2"
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: "Ebb & Flow"
         INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.ebbflow.app.watch
@@ -86,7 +86,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.EbbFlowWidgets
         PRODUCT_NAME: EbbFlowWidgets
         MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: "1"
+        CURRENT_PROJECT_VERSION: "2"
         GENERATE_INFOPLIST_FILE: YES
         IPHONEOS_DEPLOYMENT_TARGET: "26.0"
         SKIP_INSTALL: YES
@@ -97,6 +97,8 @@ targets:
       - path: EbbFlowWatch
       - path: Shared
     resources:
+      - path: EbbFlowWatch/Assets.xcassets
+        buildPhase: resources
       - path: EbbFlowWatch/PrivacyInfo.xcprivacy
         buildPhase: resources
     entitlements:
@@ -110,7 +112,9 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.watch
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleIconName: AppIcon
         INFOPLIST_KEY_WKApplication: YES
         INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.ebbflow.app
         WATCHOS_DEPLOYMENT_TARGET: "26.0"
@@ -129,13 +133,17 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.ebbflow.shared
+    info:
+      path: EbbFlowWatchWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: "Ebb & Flow Complications"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app.watch.widgets
         PRODUCT_NAME: EbbFlowWatchWidgets
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: "Ebb & Flow Complications"
-        INFOPLIST_KEY_NSExtension: "{NSExtensionPointIdentifier: com.apple.widgetkit-extension}"
         WATCHOS_DEPLOYMENT_TARGET: "26.0"
         SKIP_INSTALL: YES
   EbbFlowTests:
