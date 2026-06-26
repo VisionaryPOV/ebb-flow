@@ -26,6 +26,8 @@ targets:
         buildPhase: resources
       - path: EbbFlow/Resources/Fixtures
         buildPhase: resources
+      - path: EbbFlow/Resources/PrivacyInfo.xcprivacy
+        buildPhase: resources
     entitlements:
       path: EbbFlow/EbbFlow.entitlements
       properties:
@@ -35,6 +37,8 @@ targets:
       - target: EbbFlowWidgets
         embed: true
         platformFilter: iOS
+      - target: EbbFlowWatch
+        embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ebbflow.app
@@ -63,6 +67,9 @@ targets:
     sources:
       - path: EbbFlowWidgets
       - path: Shared
+    resources:
+      - path: EbbFlowWidgets/PrivacyInfo.xcprivacy
+        buildPhase: resources
     entitlements:
       path: EbbFlowWidgets/EbbFlowWidgets.entitlements
       properties:
@@ -89,6 +96,9 @@ targets:
     sources:
       - path: EbbFlowWatch
       - path: Shared
+    resources:
+      - path: EbbFlowWatch/PrivacyInfo.xcprivacy
+        buildPhase: resources
     entitlements:
       path: EbbFlowWatch/EbbFlowWatch.entitlements
       properties:
@@ -111,6 +121,9 @@ targets:
     sources:
       - path: EbbFlowWatchWidgets
       - path: Shared
+    resources:
+      - path: EbbFlowWatchWidgets/PrivacyInfo.xcprivacy
+        buildPhase: resources
     entitlements:
       path: EbbFlowWatchWidgets/EbbFlowWatchWidgets.entitlements
       properties:
@@ -148,6 +161,8 @@ schemes:
       targets:
         EbbFlow: all
         EbbFlowWidgets: all
+        EbbFlowWatch: all
+        EbbFlowWatchWidgets: all
     run:
       config: Debug
     test:

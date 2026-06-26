@@ -39,6 +39,34 @@ struct TargetWiringTests {
         #expect(pbxproj.contains("PBXCopyFilesBuildPhase"))
     }
 
+    @Test func ebbFlowEmbedsWatchCompanionApp() {
+        let pbxproj = Self.projectContents
+        #expect(!pbxproj.isEmpty)
+        #expect(
+            pbxproj.contains("EbbFlowWatch.app in Embed Watch Content")
+                || pbxproj.contains("EbbFlowWatch.app in Embed")
+        )
+        #expect(pbxproj.contains("EbbFlowWatch"))
+    }
+
+    @Test func projectYAMLDeclaresWatchDependencyOnMainApp() {
+        let yaml = Self.projectYAML
+        let ebbFlowBlock = Self.targetBlock(named: "EbbFlow", in: yaml) ?? ""
+        #expect(ebbFlowBlock.contains("EbbFlowWatch"))
+        #expect(ebbFlowBlock.contains("embed: true"))
+    }
+
+    @Test func privacyManifestIsBundledWithShippedTargets() {
+        let yaml = Self.projectYAML
+        for target in ["EbbFlow", "EbbFlowWidgets", "EbbFlowWatch", "EbbFlowWatchWidgets"] {
+            let block = Self.targetBlock(named: target, in: yaml) ?? ""
+            #expect(
+                block.contains("PrivacyInfo.xcprivacy"),
+                "Expected \(target) to bundle PrivacyInfo.xcprivacy"
+            )
+        }
+    }
+
     @Test func ebbFlowWatchEmbedsWatchWidgetsExtension() {
         let pbxproj = Self.projectContents
         #expect(!pbxproj.isEmpty)
